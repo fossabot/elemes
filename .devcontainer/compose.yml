@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sleep infinity
-    network_mode: service:db
     env_file:
       - ../.env
 
