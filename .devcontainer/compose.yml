@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../..:/workspaces:cached
+      - elemes:/workspaces
     command: sleep infinity
     network_mode: service:db
     env_file:

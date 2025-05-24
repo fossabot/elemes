@@ -2,7 +2,7 @@
   "name": "Node.js & TypeScript",
   "dockerComposeFile": ["compose.yml"],
   "service": "app",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceFolder": "/workspaces",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {
       "version": "latest",
