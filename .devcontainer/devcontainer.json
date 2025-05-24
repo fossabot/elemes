@@ -19,6 +19,7 @@
   "forwardPorts": [3000, 5432],
 
   "postCreateCommand": "npm install --force && npm run dev:db:migrate",
+  "postStartCommand": "npm run dev",
 
   "remoteUser": "node"
 }
