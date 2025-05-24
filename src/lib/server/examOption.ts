@@ -2,8 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import {
   dbCreateExamOption,
   dbDeleteExamOption,
-  dbSetExamOptionCorrect,
-  dbUpdateExamOptionText,
+  dbUpdateExamOption,
 } from "~/db/service/examOption";
 import {
   serverMiddlewareIsAuthorExam,
@@ -33,7 +32,12 @@ export const serverDeleteExamOption = createServerFn({ method: "POST" })
   });
 
 interface serverUpdateExamOptionData extends serverMiddlewareIsAuthorExamData {
-  update: { questionId: number; optionText: string }[];
+  update: {
+    questionId: number;
+    optionId: number;
+    optionText: string;
+    isCorrect: boolean;
+  }[];
 }
 export const serverUpdateExamOptionText = createServerFn({
   method: "POST",
@@ -44,8 +48,13 @@ export const serverUpdateExamOptionText = createServerFn({
     const { update } = data;
 
     const results = [];
-    for (const { questionId, optionText } of update) {
-      const result = await dbUpdateExamOptionText(questionId, optionText);
+    for (const { questionId, optionId, optionText, isCorrect } of update) {
+      const result = await dbUpdateExamOption(
+        questionId,
+        optionId,
+        optionText,
+        isCorrect,
+      );
       if (result) {
         results.push(result);
       }
@@ -56,7 +65,7 @@ export const serverUpdateExamOptionText = createServerFn({
   });
 
 interface serverCreateExamOptionData extends serverMiddlewareIsAuthorExamData {
-  create: { questionId: number; optionText: string }[];
+  create: { questionId: number; optionText: string; isCorrect: boolean }[];
 }
 export const serverCreateExamOption = createServerFn({
   method: "POST",
@@ -67,8 +76,12 @@ export const serverCreateExamOption = createServerFn({
     const { create } = data;
 
     const results = [];
-    for (const { questionId, optionText } of create) {
-      const result = await dbCreateExamOption(questionId, optionText);
+    for (const { questionId, optionText, isCorrect } of create) {
+      const result = await dbCreateExamOption(
+        questionId,
+        optionText,
+        isCorrect,
+      );
       if (result) {
         results.push(result);
       }
@@ -76,24 +89,4 @@ export const serverCreateExamOption = createServerFn({
     if (results.length === 0) {
     }
     return results;
-  });
-
-interface serverSetExamOptionCorrectData
-  extends serverMiddlewareIsAuthorExamData {
-  optionId: number;
-  questionId: number;
-}
-export const serverSetExamOptionCorrect = createServerFn({
-  method: "POST",
-})
-  .middleware([serverMiddlewareIsAuthorExam])
-  .validator((data: serverSetExamOptionCorrectData) => data)
-  .handler(async ({ data }) => {
-    const { optionId, questionId } = data;
-
-    const correctOption = dbSetExamOptionCorrect(questionId, optionId);
-
-    if (!correctOption) {
-    }
-    return correctOption;
   });

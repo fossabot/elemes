@@ -19,15 +19,28 @@ export async function dbDeleteExamOption(
   return deletedOption as CleanExamOption;
 }
 
-export async function dbUpdateExamOptionText(
+export async function dbUpdateExamOption(
+  questionId: number,
   optionId: number,
   newText: string,
+  isCorrect: boolean,
 ): Promise<CleanExamOption | null> {
+  const questionIdB = questionId as number & {
+    __brand: "public.exam_question";
+  };
   const optionIdB = optionId as number & { __brand: "public.exam_option" };
+
+  if (isCorrect) {
+    await db
+      .updateTable("examOption")
+      .set({ isCorrect: false })
+      .where("questionId", "=", questionIdB)
+      .execute();
+  }
 
   const updatedOption = await db
     .updateTable("examOption")
-    .set({ optionText: newText })
+    .set({ optionText: newText, isCorrect })
     .where("id", "=", optionIdB)
     .returningAll()
     .executeTakeFirst();
@@ -42,6 +55,7 @@ export async function dbUpdateExamOptionText(
 export async function dbCreateExamOption(
   questionId: number,
   optionText: string,
+  isCorrect: boolean,
 ): Promise<CleanExamOption | null> {
   const questionIdB = questionId as number & {
     __brand: "public.exam_question";
@@ -49,7 +63,7 @@ export async function dbCreateExamOption(
 
   const newOption = await db
     .insertInto("examOption")
-    .values({ questionId: questionIdB, optionText })
+    .values({ questionId: questionIdB, optionText, isCorrect })
     .returningAll()
     .executeTakeFirst();
 
@@ -58,33 +72,4 @@ export async function dbCreateExamOption(
   }
 
   return newOption as CleanExamOption;
-}
-
-export async function dbSetExamOptionCorrect(
-  questionId: number,
-  optionId: number,
-): Promise<CleanExamOption | null> {
-  const optionIdB = optionId as number & { __brand: "public.exam_option" };
-  const questionIdB = questionId as number & {
-    __brand: "public.exam_question";
-  };
-
-  await db
-    .updateTable("examOption")
-    .set({ isCorrect: false })
-    .where("questionId", "=", questionIdB)
-    .execute();
-
-  const updatedOption = await db
-    .updateTable("examOption")
-    .set({ isCorrect: true })
-    .where("id", "=", optionIdB)
-    .returningAll()
-    .executeTakeFirst();
-
-  if (!updatedOption) {
-    return null;
-  }
-
-  return updatedOption as CleanExamOption;
 }

@@ -18,11 +18,7 @@ import {
   serverUpdateExamTitleById,
 } from "~/lib/server/exam";
 import { serverCreateNewQuestion } from "~/lib/server/examQuestion";
-import {
-  CleanExamQuestion,
-  CleanExamWithName,
-  CleanQuestionWithOptions,
-} from "~/types/db";
+import { CleanExamWithName, CleanQuestionWithOptions } from "~/types/db";
 import IcBaselineEdit from "~icons/ic/baseline-edit";
 import IcRoundSave from "~icons/ic/round-save";
 import RadixIconsTrash from "~icons/radix-icons/trash";
@@ -42,12 +38,11 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
 
   const [title, setTitle] = useState(examData.title);
 
-  const [question, setQuestion] = useState<CleanExamQuestion[]>(
+  const [question, setQuestion] = useState<CleanQuestionWithOptions[]>(
     examQuestionData || [],
   );
   const mutationAddQuestion = useMutation({
     mutationFn: async () => {
-      console.log("Adding new question");
       const result = await serverCreateNewQuestion({
         data: {
           examId: examData.id,
@@ -57,7 +52,13 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
       if (!result) {
         throw new Error("Failed to create new question");
       }
-      setQuestion([...question, result]);
+      setQuestion([
+        ...question,
+        {
+          ...result,
+          options: [],
+        },
+      ]);
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
@@ -180,7 +181,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
             questionId={question.id}
             questionText={question.questionText}
             removeQuestion={() => removeQuestion(index)}
-            questionOptions={examQuestionData?.[index]?.options || []}
+            questionOptions={question.options || []}
           />
         ))}
       </Stack>

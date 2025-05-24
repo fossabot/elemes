@@ -17,7 +17,6 @@ import { useRef, useState } from "react";
 import {
   serverCreateExamOption,
   serverDeleteExamOption,
-  serverSetExamOptionCorrect,
   serverUpdateExamOptionText,
 } from "~/lib/server/examOption";
 import {
@@ -49,31 +48,6 @@ export function ExamQuestion({
   const isEdit = location.pathname.includes("/edit");
   const queryclient = useQueryClient();
 
-  const mutationRemoveQuestion = useMutation({
-    mutationFn: async () => {
-      const result = await serverDeleteQuestionById({
-        data: {
-          examId,
-          questionId,
-        },
-      });
-      if (!result) {
-        throw new Error("Failed to delete question");
-      }
-      removeQuestion();
-      return result;
-    },
-    onSuccess: () => {
-      queryclient.invalidateQueries({
-        queryKey: ["exam-questions", examId],
-        exact: true,
-      });
-    },
-    onError: (error) => {
-      console.error("Error removing question:", error);
-    },
-  });
-
   const [question, setQuestion] = useState(questionText);
   const [questionTextEdited, setQuestionTextEdited] = useState(false);
   function handleQuestionTextChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -97,7 +71,7 @@ export function ExamQuestion({
     },
     onSuccess: () => {
       setIsEditable(false);
-      queryclient.invalidateQueries({
+      queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -124,14 +98,13 @@ export function ExamQuestion({
   };
   const mutationSaveNewQuestionOptions = useMutation({
     mutationFn: async () => {
-      console.log("Saving new question options:", radioOptions);
-      console.log("Count of new options:", countNewOptions);
       if (countNewOptions.current > 0) {
         const newOptions = radioOptions
           .filter((option) => option.id === 0)
           .map((option) => ({
             questionId: questionId,
             optionText: option.optionText,
+            isCorrect: option.isCorrect,
           }));
         const result = await serverCreateExamOption({
           data: {
@@ -142,7 +115,7 @@ export function ExamQuestion({
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({
+      queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -154,9 +127,8 @@ export function ExamQuestion({
 
   const [dbIdDeletedOption, setDbIdDeletedOption] = useState<number[]>([]);
   const [dbIdUpdatedOptionMap, setDbIdUpdatedOptionMap] = useState<
-    Map<number, { id: number; optionText: string }>
+    Map<number, { id: number; optionText: string; isCorrect: boolean }>
   >(new Map());
-  const [dbIdCorrectOption, setDbIdCorrectOption] = useState<number>();
 
   const deleteRadioOption = (index: number) => {
     const newOptions = [...radioOptions];
@@ -190,7 +162,7 @@ export function ExamQuestion({
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({
+      queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -208,6 +180,7 @@ export function ExamQuestion({
         updated.set(newOptions[index].id, {
           id: newOptions[index].id,
           optionText: newLabel,
+          isCorrect: newOptions[index].isCorrect,
         });
         return updated;
       });
@@ -217,14 +190,18 @@ export function ExamQuestion({
   };
   const mutationSaveUpdateOptions = useMutation({
     mutationFn: async () => {
+      console.log("Updating options:", dbIdUpdatedOptionMap);
       if (dbIdUpdatedOptionMap.size > 0) {
         const updates = Array.from(dbIdUpdatedOptionMap.values()).map(
           (option) => ({
             questionId: questionId,
+            optionId: option.id,
             optionText: option.optionText,
             id: option.id,
+            isCorrect: option.isCorrect,
           }),
         );
+        console.log(updates);
         const result = await serverUpdateExamOptionText({
           data: {
             update: updates,
@@ -234,7 +211,7 @@ export function ExamQuestion({
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({
+      queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -249,31 +226,47 @@ export function ExamQuestion({
       ...option,
       isCorrect: i === index,
     }));
-    setDbIdCorrectOption(newOptions[index].id);
+    const optionId = newOptions[index].id;
+    if (optionId !== 0) {
+      setDbIdUpdatedOptionMap((prev) => {
+        const updated = new Map(prev);
+        updated.set(optionId, {
+          id: optionId,
+          optionText: newOptions[index].optionText,
+          isCorrect: true,
+        });
+        return updated;
+      });
+    }
     setRadioOptions(newOptions);
   };
-  const mutationSaveCorrectAnswer = useMutation({
+
+  const mutationRemoveQuestion = useMutation({
     mutationFn: async () => {
-      if (dbIdCorrectOption !== undefined) {
-        const result = await serverSetExamOptionCorrect({
-          data: {
-            questionId,
-            optionId: dbIdCorrectOption,
-            examId,
-          },
-        });
+      const result = await serverDeleteQuestionById({
+        data: {
+          examId,
+          questionId,
+        },
+      });
+      if (!result) {
+        throw new Error("Failed to delete question");
       }
+      removeQuestion();
+      return result;
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({
+      queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
     },
     onError: (error) => {
-      console.error("Error setting correct answer:", error);
+      console.error("Error removing question:", error);
     },
   });
+
+  const [selectedOption, setSelectedOption] = useState("-1");
 
   return (
     <Grid>
@@ -291,7 +284,11 @@ export function ExamQuestion({
             <Text>{question}</Text>
           )}
           <Divider my={"md"} />
-          <Radio.Group name="favoriteFramework">
+          <Radio.Group
+            name={`question-${questionId}`}
+            value={selectedOption}
+            onChange={setSelectedOption}
+          >
             <Stack mt="xs">
               {radioOptions.map((option, index) => (
                 <Flex key={index} align="center" gap="sm">
@@ -316,7 +313,8 @@ export function ExamQuestion({
                     </>
                   ) : (
                     <Radio
-                      value={option.id}
+                      value={String(option.id)}
+                      disabled={isEdit}
                       label={
                         <Flex align="center" gap="sm">
                           {option.optionText}
@@ -380,7 +378,6 @@ export function ExamQuestion({
                   mutationSaveNewQuestionOptions.mutate();
                   mutationSaveDeleteOptions.mutate();
                   mutationSaveUpdateOptions.mutate();
-                  mutationSaveCorrectAnswer.mutate();
                   setIsEditable(false);
                   setQuestionTextEdited(false);
                 }}
@@ -388,8 +385,7 @@ export function ExamQuestion({
                   mutationSaveQuestionTextEdited.isPending ||
                   mutationSaveNewQuestionOptions.isPending ||
                   mutationSaveDeleteOptions.isPending ||
-                  mutationSaveUpdateOptions.isPending ||
-                  mutationSaveCorrectAnswer.isPending
+                  mutationSaveUpdateOptions.isPending
                 }
               >
                 <IcRoundSave style={{ width: "70%", height: "auto" }} />

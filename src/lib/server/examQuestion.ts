@@ -16,7 +16,7 @@ import {
 
 interface serverGetExamQuestionByExamId
   extends serverMiddlewareIsExamPublicData {}
-const serverGetExamQuestionByExamId = createServerFn({ method: "GET" })
+export const serverGetExamQuestionByExamId = createServerFn({ method: "GET" })
   .middleware([serverMiddlewareIsExamPublic])
   .validator((data: serverGetExamQuestionByExamId) => data)
   .handler(async ({ data }) => {
