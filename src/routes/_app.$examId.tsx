@@ -1,7 +1,8 @@
+import { Center, Container } from "@mantine/core";
 import { redirect } from "@tanstack/react-router";
 import { Exam } from "~/components/Exam/Exam";
 import { queryGetExamByIdOptions } from "~/lib/server/exam";
-import { queryGetExamQuestionByExamId } from "~/lib/server/examQuestion";
+import { queryGetExamQuestionByExamIsCorrectFalseId } from "~/lib/server/examQuestion";
 
 export const Route = createFileRoute({
   loader: async ({ context, params: { examId } }) => {
@@ -13,11 +14,12 @@ export const Route = createFileRoute({
       queryGetExamByIdOptions(examIdNum),
     );
     const examQuestionData = await context.queryClient.ensureQueryData(
-      queryGetExamQuestionByExamId(examIdNum),
+      queryGetExamQuestionByExamIsCorrectFalseId(examIdNum),
     );
     return { examData, examQuestionData };
   },
   component: RouteComponent,
+  notFoundComponent: () => NotFound(),
 });
 
 function RouteComponent() {
@@ -30,5 +32,13 @@ function RouteComponent() {
       queryclient={queryClient}
       examQuestionData={examQuestionData}
     />
+  );
+}
+
+function NotFound() {
+  return (
+    <Container py="xl">
+      <Center>not found</Center>
+    </Container>
   );
 }

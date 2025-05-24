@@ -4,7 +4,8 @@ import {
   dbCreateNewQuestionByExamId,
   dbDeleteQuestionById,
   dbGetExamQuestions,
-  dbUpdateQuestionById,
+  dbGetExamQuestionsIsCorrectFalse,
+  dbUpdateQuestionTextById,
 } from "~/db/service/examQuestion";
 import {
   serverMiddlewareIsAuthorExam,
@@ -79,18 +80,43 @@ interface serverUpdateQuestionByIdData
   questionId: number;
   questionText: string;
 }
-export const serverUpdateQuestionById = createServerFn({
+export const serverUpdateQuestionTextById = createServerFn({
   method: "POST",
 })
   .middleware([serverMiddlewareIsAuthorExam])
   .validator((data: serverUpdateQuestionByIdData) => data)
   .handler(async ({ data }) => {
     const { questionId, questionText } = data;
-    const result = await dbUpdateQuestionById(questionId, questionText);
+    const result = await dbUpdateQuestionTextById(questionId, questionText);
 
     if (!result) {
       return null;
     }
 
     return result;
+  });
+
+interface serverGetExamQuestionByExamIsCorrectFalseId
+  extends serverMiddlewareIsExamPublicData {}
+const serverGetExamQuestionByExamIsCorrectFalseId = createServerFn({
+  method: "GET",
+})
+  .middleware([serverMiddlewareIsExamPublic])
+  .validator((data: serverGetExamQuestionByExamIsCorrectFalseId) => data)
+  .handler(async ({ data }) => {
+    const { examId } = data;
+    const result = await dbGetExamQuestionsIsCorrectFalse(examId);
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result;
+  });
+
+export const queryGetExamQuestionByExamIsCorrectFalseId = (examId: number) =>
+  queryOptions({
+    queryKey: ["exam-questions-false", examId],
+    queryFn: () =>
+      serverGetExamQuestionByExamIsCorrectFalseId({ data: { examId } }),
   });

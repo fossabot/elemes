@@ -10,7 +10,7 @@ export const Route = createFileRoute({
     return data;
   },
   component: App,
-  notFoundComponent: () => notFound(),
+  notFoundComponent: () => NotFound(),
 });
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
   );
 }
 
-function notFound() {
+function NotFound() {
   return (
     <Container py="xl">
       <Center>belum ada exam yang publik</Center>

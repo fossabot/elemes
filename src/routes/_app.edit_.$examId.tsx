@@ -1,4 +1,4 @@
-import { Box, Button, Container } from "@mantine/core";
+import { Box, Button, Center, Container } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import { redirect } from "@tanstack/react-router";
 import { useState } from "react";
@@ -24,6 +24,7 @@ export const Route = createFileRoute({
     return { examData, examQuestionData };
   },
   component: RouteComponent,
+  notFoundComponent: () => NotFound(),
 });
 
 function RouteComponent() {
@@ -70,6 +71,14 @@ function RouteComponent() {
         queryclient={queryClient}
         examQuestionData={examQuestionData}
       />
+    </Container>
+  );
+}
+
+function NotFound() {
+  return (
+    <Container py="xl">
+      <Center>not found</Center>
     </Container>
   );
 }

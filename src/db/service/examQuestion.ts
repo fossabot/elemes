@@ -1,9 +1,9 @@
-import { CleanExamQuestion } from "~/types/db";
+import { CleanExamQuestion, CleanQuestionWithOptions } from "~/types/db";
 import { db } from "../config";
 
 export async function dbGetExamQuestions(
   examId: number,
-): Promise<CleanExamQuestion[]> {
+): Promise<CleanQuestionWithOptions[]> {
   const examIdB = examId as number & { __brand: "public.exam" };
 
   const questions = await db
@@ -13,7 +13,67 @@ export async function dbGetExamQuestions(
     .orderBy("id")
     .execute();
 
-  return questions as CleanExamQuestion[];
+  const questionsWithOptions = await Promise.all(
+    questions.map(async (question) => {
+      const questionIdB = question.id as number & {
+        __brand: "public.exam_question";
+      };
+
+      const options = await db
+        .selectFrom("examOption")
+        .selectAll()
+        .where("questionId", "=", questionIdB)
+        .orderBy("id")
+        .execute();
+
+      return {
+        ...question,
+        options,
+      };
+    }),
+  );
+
+  return questionsWithOptions as CleanQuestionWithOptions[];
+}
+
+export async function dbGetExamQuestionsIsCorrectFalse(
+  examId: number,
+): Promise<CleanQuestionWithOptions[]> {
+  const examIdB = examId as number & { __brand: "public.exam" };
+
+  const questions = await db
+    .selectFrom("examQuestion")
+    .selectAll()
+    .where("examId", "=", examIdB)
+    .orderBy("id")
+    .execute();
+
+  const questionsWithOptions = await Promise.all(
+    questions.map(async (question) => {
+      const questionIdB = question.id as number & {
+        __brand: "public.exam_question";
+      };
+
+      const options = await db
+        .selectFrom("examOption")
+        .selectAll()
+        .where("questionId", "=", questionIdB)
+        .orderBy("id")
+        .execute();
+
+      const optionsWithoutIsCorrect = options.map((option) => ({
+        ...option,
+        isCorrect: false,
+      }));
+
+      return {
+        ...question,
+        options,
+      };
+    }),
+  );
+
+  return questionsWithOptions as CleanQuestionWithOptions[];
 }
 
 export async function dbCreateNewQuestionByExamId(
@@ -37,7 +97,7 @@ export async function dbCreateNewQuestionByExamId(
   } as CleanExamQuestion;
 }
 
-export async function dbUpdateQuestionById(
+export async function dbUpdateQuestionTextById(
   questionId: number,
   questionText: string,
 ) {

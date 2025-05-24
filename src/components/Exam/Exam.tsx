@@ -18,7 +18,11 @@ import {
   serverUpdateExamTitleById,
 } from "~/lib/server/exam";
 import { serverCreateNewQuestion } from "~/lib/server/examQuestion";
-import { CleanExamQuestion, CleanExamWithName } from "~/types/db";
+import {
+  CleanExamQuestion,
+  CleanExamWithName,
+  CleanQuestionWithOptions,
+} from "~/types/db";
 import IcBaselineEdit from "~icons/ic/baseline-edit";
 import IcRoundSave from "~icons/ic/round-save";
 import RadixIconsTrash from "~icons/radix-icons/trash";
@@ -27,7 +31,7 @@ import { ExamQuestion } from "../ExamQuestion/ExamQuestion";
 interface ExamProps {
   examData: CleanExamWithName;
   queryclient: QueryClient;
-  examQuestionData: CleanExamQuestion[] | null;
+  examQuestionData: CleanQuestionWithOptions[] | null;
 }
 export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
   const location = useLocation();
@@ -176,6 +180,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
             questionId={question.id}
             questionText={question.questionText}
             removeQuestion={() => removeQuestion(index)}
+            questionOptions={examQuestionData?.[index]?.options || []}
           />
         ))}
       </Stack>
@@ -185,6 +190,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
           color="blue"
           size={"md"}
           onClick={() => mutationAddQuestion.mutate()}
+          loading={mutationAddQuestion.isPending}
         >
           Add New Question
         </Button>

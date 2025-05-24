@@ -1,5 +1,6 @@
-import { Insertable, Selectable } from "kysely";
+import { Selectable } from "kysely";
 import ExamTable from "~/db/schemas/public/Exam";
+import ExamOption from "~/db/schemas/public/ExamOption";
 import ExamQuestion from "~/db/schemas/public/ExamQuestion";
 
 type DeepUnbrand<T> = T extends number & { __brand: any }
@@ -23,3 +24,9 @@ export interface CleanExamWithName extends CleanExam {
 }
 
 export type CleanExamQuestion = DeepUnbrand<Selectable<ExamQuestion>>;
+
+export type CleanExamOption = DeepUnbrand<Selectable<ExamOption>>;
+
+export type CleanQuestionWithOptions = CleanExamQuestion & {
+  options: CleanExamOption[];
+};
