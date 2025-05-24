@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - elemes:/workspaces
+      - dev-elemes:/workspaces
     command: sleep infinity
     network_mode: service:db
     env_file:
@@ -14,7 +14,7 @@ services:
   db:
     image: postgres:17-alpine
     volumes:
-      - dev-elemes:/var/lib/postgresql/data
+      - dev-db-elemes:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 30s
@@ -26,5 +26,5 @@ services:
       POSTGRES_DB: elemes
 
 volumes:
-  elemes:
   dev-elemes:
+  dev-db-elemes:
