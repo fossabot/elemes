@@ -1,0 +1,7 @@
+@font-face {
+  font-style: normal;
+  font-weight: normal;
+  src: url("/fonts/Geist.woff2") format("woff2");
+  font-family: "Geist";
+  font-display: swap;
+}

@@ -1,0 +1,4 @@
+**/build
+**/public
+.tanstack-start/*
+routeTree.gen.ts

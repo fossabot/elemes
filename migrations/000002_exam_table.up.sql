@@ -1,0 +1,8 @@
+CREATE TABLE exam
+(
+    id         INT       NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title      TEXT      NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    author     TEXT      NOT NULL REFERENCES "user" (id) ON DELETE CASCADE,
+    private    BOOLEAN   NOT NULL DEFAULT TRUE
+);
