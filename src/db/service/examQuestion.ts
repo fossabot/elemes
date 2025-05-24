@@ -68,7 +68,7 @@ export async function dbGetExamQuestionsIsCorrectFalse(
 
       return {
         ...question,
-        options,
+        options: optionsWithoutIsCorrect,
       };
     }),
   );
