@@ -11,25 +11,66 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useElementSize } from "@mantine/hooks";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
+import {
+  serverDeleteQuestionById,
+  serverUpdateQuestionById,
+} from "~/lib/server/examQuestion";
 import IcBaselineEdit from "~icons/ic/baseline-edit";
 import IcRoundSave from "~icons/ic/round-save";
 import RadixIconsTrash from "~icons/radix-icons/trash";
 
 interface ExamQuestionProps {
-  questionId: string;
+  examId: number;
+  questionId: number;
+  questionText: string;
+  removeQuestion: () => void;
 }
-export function ExamQuestion({ questionId }: ExamQuestionProps) {
+export function ExamQuestion({
+  examId,
+  questionId,
+  questionText,
+  removeQuestion,
+}: ExamQuestionProps) {
   const location = useLocation();
   const [isEditable, setIsEditable] = useState(false);
   const { ref, height } = useElementSize();
   const isEdit = location.pathname.includes("/edit");
+  const queryclient = useQueryClient();
 
-  const [problem, setProblem] = useState(questionId);
-  function handleProblemChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setProblem(e.currentTarget.value);
+  const [questionEdited, setQuestionEdited] = useState(false);
+
+  const [question, setQuestion] = useState(questionText);
+  function handleQuestionChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQuestion(e.currentTarget.value);
+    setQuestionEdited(true);
   }
+  const mutationRemoveQuestion = useMutation({
+    mutationFn: async () => {
+      const result = await serverDeleteQuestionById({
+        data: {
+          examId,
+          questionId,
+        },
+      });
+      if (!result) {
+        throw new Error("Failed to delete question");
+      }
+      removeQuestion();
+      return result;
+    },
+    onSuccess: () => {
+      queryclient.invalidateQueries({
+        queryKey: ["exam-questions", examId],
+        exact: true,
+      });
+    },
+    onError: (error) => {
+      console.error("Error removing question:", error);
+    },
+  });
 
   const [radioOptions, setRadioOptions] = useState([
     { value: "react", label: "React", isCorrect: false },
@@ -69,6 +110,32 @@ export function ExamQuestion({ questionId }: ExamQuestionProps) {
     setRadioOptions(newOptions);
   };
 
+  const mutationSaveEdit = useMutation({
+    mutationFn: async () => {
+      const result = await serverUpdateQuestionById({
+        data: {
+          examId,
+          questionId,
+          questionText: question,
+        },
+      });
+      if (!result) {
+        throw new Error("Failed to update question");
+      }
+      return result;
+    },
+    onSuccess: () => {
+      setIsEditable(false);
+      queryclient.invalidateQueries({
+        queryKey: ["exam-questions", examId],
+        exact: true,
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating question:", error);
+    },
+  });
+
   return (
     <Grid>
       <Grid.Col span={isEdit ? 11 : 12}>
@@ -76,18 +143,16 @@ export function ExamQuestion({ questionId }: ExamQuestionProps) {
           {isEditable ? (
             <TextInput
               size={"md"}
-              value={problem}
+              value={question}
               onChange={(e) => {
-                handleProblemChange(e);
+                handleQuestionChange(e);
               }}
             />
           ) : (
-            <Text>{problem}</Text>
+            <Text>{question}</Text>
           )}
           <Divider my={"md"} />
-          <Radio.Group
-            name="favoriteFramework"
-          >
+          <Radio.Group name="favoriteFramework">
             <Stack mt="xs">
               {radioOptions.map((option, index) => (
                 <Flex key={index} align="center" gap="sm">
@@ -169,7 +234,7 @@ export function ExamQuestion({ questionId }: ExamQuestionProps) {
               <ActionIcon
                 bg={"green"}
                 size={40}
-                onClick={() => setIsEditable(false)}
+                onClick={() => mutationSaveEdit.mutate()}
               >
                 <IcRoundSave style={{ width: "70%", height: "auto" }} />
               </ActionIcon>
@@ -178,7 +243,11 @@ export function ExamQuestion({ questionId }: ExamQuestionProps) {
                 <IcBaselineEdit style={{ width: "70%", height: "auto" }} />
               </ActionIcon>
             )}
-            <ActionIcon bg={"red"} size={40}>
+            <ActionIcon
+              bg={"red"}
+              size={40}
+              onClick={() => mutationRemoveQuestion.mutate()}
+            >
               <RadixIconsTrash style={{ width: "70%", height: "auto" }} />
             </ActionIcon>
           </Stack>

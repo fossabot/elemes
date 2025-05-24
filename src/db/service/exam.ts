@@ -3,7 +3,11 @@ import { db } from "../config";
 import { dbGetNameById } from "./user";
 
 export async function dbGetAllExams(): Promise<CleanExamWithName[]> {
-  const exams = await db.selectFrom("exam").selectAll().execute();
+  const exams = await db
+    .selectFrom("exam")
+    .selectAll()
+    .where("private", "=", false)
+    .execute();
 
   const authorIds = Array.from(new Set(exams.map((exam) => exam.author)));
 
@@ -76,6 +80,7 @@ export async function dbGetExamById(
     .selectFrom("exam")
     .selectAll()
     .where("id", "=", examIdB)
+    .orderBy("id")
     .executeTakeFirst();
 
   if (!exam) {
@@ -150,4 +155,42 @@ export async function dbIsAuthorExam(
     .executeTakeFirst();
 
   return !!exam;
+}
+
+export async function dbChangeExamVisibility(
+  examId: number,
+  isPrivate: boolean,
+): Promise<CleanExam | null> {
+  const examIdB = examId as number & { __brand: "public.exam" };
+
+  const updatedExam = await db
+    .updateTable("exam")
+    .set({ private: isPrivate })
+    .where("id", "=", examIdB)
+    .returningAll()
+    .executeTakeFirst();
+
+  if (!updatedExam) {
+    return null;
+  }
+
+  return {
+    ...updatedExam,
+  } as CleanExam;
+}
+
+export async function dbIsExamPrivate(examId: number): Promise<boolean> {
+  const examIdB = examId as number & { __brand: "public.exam" };
+
+  const result = await db
+    .selectFrom("exam")
+    .select(["private"])
+    .where("id", "=", examIdB)
+    .executeTakeFirst();
+
+  if (!result) {
+    return false;
+  }
+
+  return result.private;
 }

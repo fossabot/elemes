@@ -1,7 +1,13 @@
 import { Box, Button, Container } from "@mantine/core";
+import { useMutation } from "@tanstack/react-query";
 import { redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import { Exam } from "~/components/Exam/Exam";
-import { queryGetExamByIdOptions } from "~/lib/server/exam";
+import {
+  queryGetExamByIdOptions,
+  serverChangeExamVisibility,
+} from "~/lib/server/exam";
+import { queryGetExamQuestionByExamId } from "~/lib/server/examQuestion";
 
 export const Route = createFileRoute({
   loader: async ({ context, params: { examId } }) => {
@@ -12,21 +18,58 @@ export const Route = createFileRoute({
     const examData = await context.queryClient.ensureQueryData(
       queryGetExamByIdOptions(examIdNum),
     );
-    return { examData };
+    const examQuestionData = await context.queryClient.ensureQueryData(
+      queryGetExamQuestionByExamId(examIdNum),
+    );
+    return { examData, examQuestionData };
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { examData } = Route.useLoaderData();
+  const { examData, examQuestionData } = Route.useLoaderData();
   const { queryClient } = Route.useRouteContext();
+
+  const [visibility, setVisibility] = useState(examData.private);
+
+  const mutationChangeVisibility = useMutation({
+    mutationFn: async () => {
+      const result = await serverChangeExamVisibility({
+        data: {
+          examId: examData.id,
+          isPrivate: !visibility,
+        },
+      });
+      if (!result) {
+        throw new Error("Failed to change visibility");
+      }
+      setVisibility(!visibility);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["exams"],
+      });
+    },
+  });
 
   return (
     <Container>
       <Box px={"xl"}>
-        <Button fullWidth>Change Visibility to Private</Button>
+        <Button
+          fullWidth
+          onClick={() => mutationChangeVisibility.mutate()}
+          loading={mutationChangeVisibility.isPending}
+        >
+          {visibility
+            ? "Change Visibility to Public"
+            : "Change Visibility to Private"}
+        </Button>
       </Box>
-      <Exam examData={examData} queryclient={queryClient} />
+      <Exam
+        examData={examData}
+        queryclient={queryClient}
+        examQuestionData={examQuestionData}
+      />
     </Container>
   );
 }

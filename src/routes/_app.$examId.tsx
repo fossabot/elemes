@@ -1,6 +1,7 @@
 import { redirect } from "@tanstack/react-router";
 import { Exam } from "~/components/Exam/Exam";
 import { queryGetExamByIdOptions } from "~/lib/server/exam";
+import { queryGetExamQuestionByExamId } from "~/lib/server/examQuestion";
 
 export const Route = createFileRoute({
   loader: async ({ context, params: { examId } }) => {
@@ -11,14 +12,23 @@ export const Route = createFileRoute({
     const examData = await context.queryClient.ensureQueryData(
       queryGetExamByIdOptions(examIdNum),
     );
-    return { examData };
+    const examQuestionData = await context.queryClient.ensureQueryData(
+      queryGetExamQuestionByExamId(examIdNum),
+    );
+    return { examData, examQuestionData };
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { examData } = Route.useLoaderData();
+  const { examData, examQuestionData } = Route.useLoaderData();
   const { queryClient } = Route.useRouteContext();
 
-  return <Exam examData={examData} queryclient={queryClient} />;
+  return (
+    <Exam
+      examData={examData}
+      queryclient={queryClient}
+      examQuestionData={examQuestionData}
+    />
+  );
 }

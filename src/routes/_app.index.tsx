@@ -25,7 +25,7 @@ function App() {
 function notFound() {
   return (
     <Container py="xl">
-      <Center>belum ada exam yang ditambahkan</Center>
+      <Center>belum ada exam yang publik</Center>
     </Container>
   );
 }

@@ -1,5 +1,5 @@
 import { createMiddleware } from "@tanstack/react-start";
-import { dbIsAuthorExam } from "~/db/service/exam";
+import { dbIsAuthorExam, dbIsExamPrivate } from "~/db/service/exam";
 import { serverGetUser } from "./auth";
 
 export const serverMiddlewareAuth = createMiddleware({
@@ -28,6 +28,29 @@ export const serverMiddlewareIsAuthorExam = createMiddleware({
     });
     if (!isAuthor) {
       throw new Error("Unauthorized");
+    }
+    return next();
+  });
+
+export interface serverMiddlewareIsExamPublicData {
+  examId: number;
+}
+export const serverMiddlewareIsExamPublic = createMiddleware({
+  type: "function",
+})
+  .middleware([serverMiddlewareAuth])
+  .validator((data: serverMiddlewareIsExamPublicData) => data)
+  .server(async ({ next, context, data }) => {
+    const { user } = context;
+    const isPrivate = await dbIsExamPrivate(data.examId);
+    if (isPrivate) {
+      const isAuthor = await dbIsAuthorExam({
+        examId: data.examId,
+        userId: user.id,
+      });
+      if (!isAuthor) {
+        throw new Error("Unauthorized");
+      }
     }
     return next();
   });

@@ -10,6 +10,7 @@ export async function dbGetExamQuestions(
     .selectFrom("examQuestion")
     .selectAll()
     .where("examId", "=", examIdB)
+    .orderBy("id")
     .execute();
 
   return questions as CleanExamQuestion[];

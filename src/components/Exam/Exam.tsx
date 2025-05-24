@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Button,
   Card,
   Container,
   Flex,
@@ -9,15 +10,15 @@ import {
   Title,
 } from "@mantine/core";
 import { useElementSize } from "@mantine/hooks";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   serverDeleteExamById,
   serverUpdateExamTitleById,
 } from "~/lib/server/exam";
-import { queryGetExamQuestionByExamIdOptions } from "~/lib/server/examQuestion";
-import { CleanExamWithName } from "~/types/db";
+import { serverCreateNewQuestion } from "~/lib/server/examQuestion";
+import { CleanExamQuestion, CleanExamWithName } from "~/types/db";
 import IcBaselineEdit from "~icons/ic/baseline-edit";
 import IcRoundSave from "~icons/ic/round-save";
 import RadixIconsTrash from "~icons/radix-icons/trash";
@@ -26,8 +27,9 @@ import { ExamQuestion } from "../ExamQuestion/ExamQuestion";
 interface ExamProps {
   examData: CleanExamWithName;
   queryclient: QueryClient;
+  examQuestionData: CleanExamQuestion[] | null;
 }
-export function Exam({ examData, queryclient }: ExamProps) {
+export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const isEdit = location.pathname.includes("/edit");
@@ -35,12 +37,39 @@ export function Exam({ examData, queryclient }: ExamProps) {
   const { ref, height } = useElementSize();
 
   const [title, setTitle] = useState(examData.title);
-  console.log("examData", examData);
 
-  const examQuestionData = useQuery(
-    queryGetExamQuestionByExamIdOptions(examData.id),
+  const [question, setQuestion] = useState<CleanExamQuestion[]>(
+    examQuestionData || [],
   );
-  console.log("examQuestionData", examQuestionData.data);
+  const mutationAddQuestion = useMutation({
+    mutationFn: async () => {
+      console.log("Adding new question");
+      const result = await serverCreateNewQuestion({
+        data: {
+          examId: examData.id,
+          questionText: "NewQuestion",
+        },
+      });
+      if (!result) {
+        throw new Error("Failed to create new question");
+      }
+      setQuestion([...question, result]);
+    },
+    onSuccess: () => {
+      queryclient.invalidateQueries({
+        queryKey: ["exam-questions", examData.id],
+        exact: true,
+      });
+    },
+    onError: (error) => {
+      console.error("Error adding new question:", error);
+    },
+  });
+  const removeQuestion = (index: number) => {
+    const newQuestions = [...question];
+    newQuestions.splice(index, 1);
+    setQuestion(newQuestions);
+  };
 
   const mutationUpdateExamTitle = useMutation({
     mutationFn: async (title: string) => {
@@ -139,9 +168,27 @@ export function Exam({ examData, queryclient }: ExamProps) {
           </Grid.Col>
         )}
       </Grid>
-      <Stack pt={"50"} h={"100%"}>
-        <ExamQuestion questionId={"question1"} />
+      <Stack py={"50"} h={"100%"}>
+        {question?.map((question, index) => (
+          <ExamQuestion
+            key={question.id}
+            examId={examData.id}
+            questionId={question.id}
+            questionText={question.questionText}
+            removeQuestion={() => removeQuestion(index)}
+          />
+        ))}
       </Stack>
+      {isEdit && (
+        <Button
+          fullWidth
+          color="blue"
+          size={"md"}
+          onClick={() => mutationAddQuestion.mutate()}
+        >
+          Add New Question
+        </Button>
+      )}
     </Container>
   );
 }
