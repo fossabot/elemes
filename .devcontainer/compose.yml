@@ -26,4 +26,5 @@ services:
       POSTGRES_DB: elemes
 
 volumes:
+  elemes:
   dev-elemes:
