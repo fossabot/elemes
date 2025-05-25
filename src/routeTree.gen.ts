@@ -18,6 +18,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppEditRouteImport } from './routes/_app.edit'
+import { Route as AppApikeyRouteImport } from './routes/_app.apikey'
 import { Route as AppExamIdRouteImport } from './routes/_app.$examId'
 import { Route as AppEditExamIdRouteImport } from './routes/_app.edit_.$examId'
 import { Route as AppExamIdResultRouteImport } from './routes/_app.$examId_.result'
@@ -50,6 +51,12 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppEditRoute = AppEditRouteImport.update({
   id: '/edit',
   path: '/edit',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppApikeyRoute = AppApikeyRouteImport.update({
+  id: '/apikey',
+  path: '/apikey',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -101,6 +108,13 @@ declare module '@tanstack/react-router' {
       path: '/$examId'
       fullPath: '/$examId'
       preLoaderRoute: typeof AppExamIdRouteImport
+      parentRoute: typeof AppRouteImport
+    }
+    '/_app/apikey': {
+      id: '/_app/apikey'
+      path: '/apikey'
+      fullPath: '/apikey'
+      preLoaderRoute: typeof AppApikeyRouteImport
       parentRoute: typeof AppRouteImport
     }
     '/_app/edit': {
@@ -172,6 +186,15 @@ declare module './routes/_app.$examId' {
     FileRoutesByPath['/_app/$examId']['fullPath']
   >
 }
+declare module './routes/_app.apikey' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/apikey',
+    FileRoutesByPath['/_app/apikey']['parentRoute'],
+    FileRoutesByPath['/_app/apikey']['id'],
+    FileRoutesByPath['/_app/apikey']['path'],
+    FileRoutesByPath['/_app/apikey']['fullPath']
+  >
+}
 declare module './routes/_app.edit' {
   const createFileRoute: CreateFileRoute<
     '/_app/edit',
@@ -213,6 +236,7 @@ declare module './routes/_app.edit_.$examId' {
 
 interface AppRouteChildren {
   AppExamIdRoute: typeof AppExamIdRoute
+  AppApikeyRoute: typeof AppApikeyRoute
   AppEditRoute: typeof AppEditRoute
   AppIndexRoute: typeof AppIndexRoute
   AppExamIdResultRoute: typeof AppExamIdResultRoute
@@ -221,6 +245,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppExamIdRoute: AppExamIdRoute,
+  AppApikeyRoute: AppApikeyRoute,
   AppEditRoute: AppEditRoute,
   AppIndexRoute: AppIndexRoute,
   AppExamIdResultRoute: AppExamIdResultRoute,
@@ -234,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/$examId': typeof AppExamIdRoute
+  '/apikey': typeof AppApikeyRoute
   '/edit': typeof AppEditRoute
   '/': typeof AppIndexRoute
   '/$examId/result': typeof AppExamIdResultRoute
@@ -244,6 +270,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/$examId': typeof AppExamIdRoute
+  '/apikey': typeof AppApikeyRoute
   '/edit': typeof AppEditRoute
   '/': typeof AppIndexRoute
   '/$examId/result': typeof AppExamIdResultRoute
@@ -256,6 +283,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_app/$examId': typeof AppExamIdRoute
+  '/_app/apikey': typeof AppApikeyRoute
   '/_app/edit': typeof AppEditRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$examId_/result': typeof AppExamIdResultRoute
@@ -269,6 +297,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/$examId'
+    | '/apikey'
     | '/edit'
     | '/'
     | '/$examId/result'
@@ -278,6 +307,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/$examId'
+    | '/apikey'
     | '/edit'
     | '/'
     | '/$examId/result'
@@ -288,6 +318,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_app/$examId'
+    | '/_app/apikey'
     | '/_app/edit'
     | '/_app/'
     | '/_app/$examId_/result'
@@ -326,6 +357,7 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/$examId",
+        "/_app/apikey",
         "/_app/edit",
         "/_app/",
         "/_app/$examId_/result",
@@ -340,6 +372,10 @@ export const routeTree = rootRoute
     },
     "/_app/$examId": {
       "filePath": "_app.$examId.tsx",
+      "parent": "/_app"
+    },
+    "/_app/apikey": {
+      "filePath": "_app.apikey.tsx",
       "parent": "/_app"
     },
     "/_app/edit": {

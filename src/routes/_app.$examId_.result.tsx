@@ -48,7 +48,7 @@ function RouteComponent() {
           <>
             <Text>Grade : {examResult.grade} / 100</Text>
             <Text>
-              Submission Date : {" "}
+              Submission Date :{" "}
               {new Date(examResult.submittedAt).toLocaleString()}
             </Text>
           </>
@@ -60,6 +60,34 @@ function RouteComponent() {
         )}
       </Paper>
       <Space h="xl" />
+      <Button
+        size={"md"}
+        fullWidth
+        onClick={async () => {
+          const res = await fetch(`/api/cert/${examData.id}`);
+          if (!res.ok) {
+            return;
+          }
+          const blob = await res.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          const disposition = res.headers.get("Content-Disposition");
+          let fileName = "certificate.pdf";
+          if (disposition) {
+            const match = disposition.match(/filename="(.+)"/);
+            if (match) fileName = match[1];
+          }
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+        }}
+      >
+        Download Certificate
+      </Button>
+      <Space h="md" />
       <Button
         size={"md"}
         fullWidth

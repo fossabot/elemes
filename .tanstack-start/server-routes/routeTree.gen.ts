@@ -19,11 +19,25 @@ import {
   createServerFileRoute,
 } from '@tanstack/react-start/server'
 
+import { ServerRoute as ApiDataIdRouteImport } from './../../src/routes/api/data.id'
+import { ServerRoute as ApiCertExamIdRouteImport } from './../../src/routes/api/cert.$examId'
 import { ServerRoute as ApiAuthSplatRouteImport } from './../../src/routes/api/auth/$'
 
 // Create/Update Routes
 
 const rootRoute = createServerRoute()
+
+const ApiDataIdRoute = ApiDataIdRouteImport.update({
+  id: '/api/data/id',
+  path: '/api/data/id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ApiCertExamIdRoute = ApiCertExamIdRouteImport.update({
+  id: '/api/cert/$examId',
+  path: '/api/cert/$examId',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -42,6 +56,20 @@ declare module '@tanstack/react-start/server' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRoute
     }
+    '/api/cert/$examId': {
+      id: '/api/cert/$examId'
+      path: '/api/cert/$examId'
+      fullPath: '/api/cert/$examId'
+      preLoaderRoute: typeof ApiCertExamIdRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/api/data/id': {
+      id: '/api/data/id'
+      path: '/api/data/id'
+      fullPath: '/api/data/id'
+      preLoaderRoute: typeof ApiDataIdRouteImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -56,37 +84,65 @@ declare module './../../src/routes/api/auth/$' {
     unknown
   >
 }
+declare module './../../src/routes/api/cert.$examId' {
+  const createServerFileRoute: CreateServerFileRoute<
+    FileRoutesByPath['/api/cert/$examId']['parentRoute'],
+    FileRoutesByPath['/api/cert/$examId']['id'],
+    FileRoutesByPath['/api/cert/$examId']['path'],
+    FileRoutesByPath['/api/cert/$examId']['fullPath'],
+    unknown
+  >
+}
+declare module './../../src/routes/api/data.id' {
+  const createServerFileRoute: CreateServerFileRoute<
+    FileRoutesByPath['/api/data/id']['parentRoute'],
+    FileRoutesByPath['/api/data/id']['id'],
+    FileRoutesByPath['/api/data/id']['path'],
+    FileRoutesByPath['/api/data/id']['fullPath'],
+    unknown
+  >
+}
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cert/$examId': typeof ApiCertExamIdRoute
+  '/api/data/id': typeof ApiDataIdRoute
 }
 
 export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cert/$examId': typeof ApiCertExamIdRoute
+  '/api/data/id': typeof ApiDataIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cert/$examId': typeof ApiCertExamIdRoute
+  '/api/data/id': typeof ApiDataIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/api/auth/$'
+  fullPaths: '/api/auth/$' | '/api/cert/$examId' | '/api/data/id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
+  to: '/api/auth/$' | '/api/cert/$examId' | '/api/data/id'
+  id: '__root__' | '/api/auth/$' | '/api/cert/$examId' | '/api/data/id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCertExamIdRoute: typeof ApiCertExamIdRoute
+  ApiDataIdRoute: typeof ApiDataIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCertExamIdRoute: ApiCertExamIdRoute,
+  ApiDataIdRoute: ApiDataIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -99,11 +155,19 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/api/auth/$"
+        "/api/auth/$",
+        "/api/cert/$examId",
+        "/api/data/id"
       ]
     },
     "/api/auth/$": {
       "filePath": "api/auth/$.ts"
+    },
+    "/api/cert/$examId": {
+      "filePath": "api/cert.$examId.ts"
+    },
+    "/api/data/id": {
+      "filePath": "api/data.id.ts"
     }
   }
 }

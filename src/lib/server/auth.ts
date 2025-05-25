@@ -26,3 +26,12 @@ export const queryGetUserOptions = () =>
     queryKey: ["user"],
     queryFn: () => serverGetUser(),
   });
+
+export const serverGetApiKey = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { headers } = getWebRequest();
+    const apikey = await auth.api.listApiKeys({ headers });
+
+    return apikey || null;
+  },
+);
