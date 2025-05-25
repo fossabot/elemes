@@ -3,7 +3,7 @@ ARG MIGRATE_VERSION=4.18.3
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm i --force
 
 COPY . .
