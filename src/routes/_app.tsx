@@ -17,6 +17,7 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import { useState } from "react";
+import Logo from "~/components/logo";
 import { SchemaColor } from "~/components/SchemaColor/SchemaColor";
 import { authClient } from "~/lib/client/auth";
 import { queryGetUserOptions, serverCheckSession } from "~/lib/server/auth";
@@ -42,13 +43,21 @@ export const Route = createFileRoute({
 function RouteComponent() {
   const { queryClient } = Route.useRouteContext();
   const [opened, setOpened] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <AppShell header={{ height: 60 }} padding="md">
       <AppShell.Header>
         <Container h={"100%"}>
           <Group h="100%" px="md" justify={"space-between"} align={"center"}>
-            <div>Logo nanti ya</div>
+            <ActionIcon
+              size={50}
+              variant="transparent"
+              aria-label="Logo"
+              onClick={() => navigate({ to: "/", reloadDocument: true })}
+            >
+              <Logo />
+            </ActionIcon>
             <Group>
               <Menu width={200} position="bottom-end" opened={opened}>
                 <Menu.Target>

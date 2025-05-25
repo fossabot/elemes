@@ -190,6 +190,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
           fullWidth
           color="blue"
           size={"md"}
+          variant={"light"}
           onClick={() => mutationAddQuestion.mutate()}
           loading={mutationAddQuestion.isPending}
         >
