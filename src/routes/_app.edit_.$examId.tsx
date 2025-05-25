@@ -10,11 +10,14 @@ import {
 import { queryGetExamQuestionByExamId } from "~/lib/server/examQuestion";
 
 export const Route = createFileRoute({
-  loader: async ({ context, params: { examId } }) => {
+  beforeLoad: async ({ context, params: { examId }, search }) => {
     const examIdNum = Number(examId);
     if (isNaN(examIdNum)) {
       throw redirect({ to: "/" });
     }
+  },
+  loader: async ({ context, params: { examId } }) => {
+    const examIdNum = Number(examId);
     const examData = await context.queryClient.ensureQueryData(
       queryGetExamByIdOptions(examIdNum),
     );

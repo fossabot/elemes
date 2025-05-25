@@ -17,6 +17,7 @@ import {
   serverDeleteExamById,
   serverUpdateExamTitleById,
 } from "~/lib/server/exam";
+import { serverGradingExam } from "~/lib/server/examAttempt";
 import { serverCreateNewQuestion } from "~/lib/server/examQuestion";
 import { CleanExamWithName, CleanQuestionWithOptions } from "~/types/db";
 import IcBaselineEdit from "~icons/ic/baseline-edit";
@@ -120,6 +121,39 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
     },
   });
 
+  const [selectedAnswer, setSelectedAnswer] = useState<Map<number, number>>(
+    new Map(),
+  );
+  const mutationSubmitExam = useMutation({
+    mutationFn: async () => {
+      const result = await serverGradingExam({
+        data: {
+          examId: examData.id,
+          options: Array.from(selectedAnswer.entries()).map(
+            ([questionId, selectedOptionId]) => ({
+              questionId,
+              selectedOptionId,
+            }),
+          ),
+        },
+      });
+    },
+    onSuccess: async () => {
+      await queryclient.invalidateQueries({
+        queryKey: ["exam-attempt", examData.id],
+        exact: true,
+      });
+      navigate({
+        to: `/${examData.id}/result`,
+        reloadDocument: true,
+      });
+      console.log("Exam submitted successfully");
+    },
+    onError: (error) => {
+      console.error("Error submitting exam:", error);
+    },
+  });
+
   return (
     <Container py="xl">
       <Grid>
@@ -182,6 +216,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
             questionText={question.questionText}
             removeQuestion={() => removeQuestion(index)}
             questionOptions={question.options || []}
+            setSelectedAnswer={setSelectedAnswer}
           />
         ))}
       </Stack>
@@ -195,6 +230,16 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
           loading={mutationAddQuestion.isPending}
         >
           Add New Question
+        </Button>
+      )}
+      {!isEdit && (
+        <Button
+          fullWidth
+          size={"md"}
+          onClick={() => mutationSubmitExam.mutate()}
+          loading={mutationSubmitExam.isPending}
+        >
+          Submit Exam
         </Button>
       )}
     </Container>

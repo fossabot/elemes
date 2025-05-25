@@ -16,9 +16,9 @@ export default interface ExamAttemptTable {
 
   examId: ColumnType<ExamId, ExamId, ExamId>;
 
-  submittedAt: ColumnType<Date | null, Date | string | null, Date | string | null>;
+  submittedAt: ColumnType<Date, Date | string | undefined, Date | string>;
 
-  grade: ColumnType<number | null, number | null, number | null>;
+  grade: ColumnType<number, number, number>;
 }
 
 export type ExamAttempt = Selectable<ExamAttemptTable>;

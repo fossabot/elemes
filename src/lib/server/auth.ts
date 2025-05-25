@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { createMiddleware, createServerFn } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
 import { auth } from "../auth";
 

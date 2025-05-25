@@ -140,3 +140,17 @@ export async function dbDeleteQuestionById(questionId: number) {
     ...deletedQuestion,
   } as CleanExamQuestion;
 }
+
+export async function dbGetQuestionLengthByExamId(
+  examId: number,
+): Promise<number> {
+  const examIdB = examId as number & { __brand: "public.exam" };
+
+  const count = await db
+    .selectFrom("examQuestion")
+    .where("examId", "=", examIdB)
+    .select((eb) => eb.fn.count("id").as("count"))
+    .executeTakeFirst();
+
+  return Number(count?.count) ?? 0;
+}

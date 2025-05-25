@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS "option";
+DROP TABLE IF EXISTS exam_option;

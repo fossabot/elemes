@@ -20,6 +20,7 @@ import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppEditRouteImport } from './routes/_app.edit'
 import { Route as AppExamIdRouteImport } from './routes/_app.$examId'
 import { Route as AppEditExamIdRouteImport } from './routes/_app.edit_.$examId'
+import { Route as AppExamIdResultRouteImport } from './routes/_app.$examId_.result'
 
 // Create/Update Routes
 
@@ -61,6 +62,12 @@ const AppExamIdRoute = AppExamIdRouteImport.update({
 const AppEditExamIdRoute = AppEditExamIdRouteImport.update({
   id: '/edit_/$examId',
   path: '/edit/$examId',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppExamIdResultRoute = AppExamIdResultRouteImport.update({
+  id: '/$examId_/result',
+  path: '/$examId/result',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -108,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteImport
+    }
+    '/_app/$examId_/result': {
+      id: '/_app/$examId_/result'
+      path: '/$examId/result'
+      fullPath: '/$examId/result'
+      preLoaderRoute: typeof AppExamIdResultRouteImport
       parentRoute: typeof AppRouteImport
     }
     '/_app/edit_/$examId': {
@@ -176,6 +190,15 @@ declare module './routes/_app.index' {
     FileRoutesByPath['/_app/']['fullPath']
   >
 }
+declare module './routes/_app.$examId_.result' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/$examId_/result',
+    FileRoutesByPath['/_app/$examId_/result']['parentRoute'],
+    FileRoutesByPath['/_app/$examId_/result']['id'],
+    FileRoutesByPath['/_app/$examId_/result']['path'],
+    FileRoutesByPath['/_app/$examId_/result']['fullPath']
+  >
+}
 declare module './routes/_app.edit_.$examId' {
   const createFileRoute: CreateFileRoute<
     '/_app/edit_/$examId',
@@ -192,6 +215,7 @@ interface AppRouteChildren {
   AppExamIdRoute: typeof AppExamIdRoute
   AppEditRoute: typeof AppEditRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppExamIdResultRoute: typeof AppExamIdResultRoute
   AppEditExamIdRoute: typeof AppEditExamIdRoute
 }
 
@@ -199,6 +223,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppExamIdRoute: AppExamIdRoute,
   AppEditRoute: AppEditRoute,
   AppIndexRoute: AppIndexRoute,
+  AppExamIdResultRoute: AppExamIdResultRoute,
   AppEditExamIdRoute: AppEditExamIdRoute,
 }
 
@@ -211,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/$examId': typeof AppExamIdRoute
   '/edit': typeof AppEditRoute
   '/': typeof AppIndexRoute
+  '/$examId/result': typeof AppExamIdResultRoute
   '/edit/$examId': typeof AppEditExamIdRoute
 }
 
@@ -220,6 +246,7 @@ export interface FileRoutesByTo {
   '/$examId': typeof AppExamIdRoute
   '/edit': typeof AppEditRoute
   '/': typeof AppIndexRoute
+  '/$examId/result': typeof AppExamIdResultRoute
   '/edit/$examId': typeof AppEditExamIdRoute
 }
 
@@ -231,6 +258,7 @@ export interface FileRoutesById {
   '/_app/$examId': typeof AppExamIdRoute
   '/_app/edit': typeof AppEditRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/$examId_/result': typeof AppExamIdResultRoute
   '/_app/edit_/$examId': typeof AppEditExamIdRoute
 }
 
@@ -243,9 +271,17 @@ export interface FileRouteTypes {
     | '/$examId'
     | '/edit'
     | '/'
+    | '/$examId/result'
     | '/edit/$examId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/register' | '/$examId' | '/edit' | '/' | '/edit/$examId'
+  to:
+    | '/login'
+    | '/register'
+    | '/$examId'
+    | '/edit'
+    | '/'
+    | '/$examId/result'
+    | '/edit/$examId'
   id:
     | '__root__'
     | '/_app'
@@ -254,6 +290,7 @@ export interface FileRouteTypes {
     | '/_app/$examId'
     | '/_app/edit'
     | '/_app/'
+    | '/_app/$examId_/result'
     | '/_app/edit_/$examId'
   fileRoutesById: FileRoutesById
 }
@@ -291,6 +328,7 @@ export const routeTree = rootRoute
         "/_app/$examId",
         "/_app/edit",
         "/_app/",
+        "/_app/$examId_/result",
         "/_app/edit_/$examId"
       ]
     },
@@ -310,6 +348,10 @@ export const routeTree = rootRoute
     },
     "/_app/": {
       "filePath": "_app.index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/$examId_/result": {
+      "filePath": "_app.$examId_.result.tsx",
       "parent": "/_app"
     },
     "/_app/edit_/$examId": {

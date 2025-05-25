@@ -25,14 +25,6 @@ import RadixIconsAvatar from "~icons/radix-icons/avatar";
 
 export const Route = createFileRoute({
   beforeLoad: async ({ context }) => {
-    const sessionValid = await serverCheckSession();
-    if (!sessionValid) {
-      await authClient.signOut();
-      context.queryClient.invalidateQueries({
-        queryKey: ["user"],
-      });
-      throw redirect({ to: "/login" });
-    }
     if (!context.user) {
       throw redirect({ to: "/login" });
     }

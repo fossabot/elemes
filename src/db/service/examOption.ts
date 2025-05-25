@@ -73,3 +73,22 @@ export async function dbCreateExamOption(
 
   return newOption as CleanExamOption;
 }
+
+export async function dbIsExamOptionCorrect(
+  questionId: number,
+  optionId: number,
+): Promise<boolean> {
+  const questionIdB = questionId as number & {
+    __brand: "public.exam_question";
+  };
+  const optionIdB = optionId as number & { __brand: "public.exam_option" };
+
+  const result = await db
+    .selectFrom("examOption")
+    .where("questionId", "=", questionIdB)
+    .where("id", "=", optionIdB)
+    .select("isCorrect")
+    .executeTakeFirst();
+
+  return result ? result.isCorrect : false;
+}

@@ -1,15 +1,21 @@
 import { createMiddleware } from "@tanstack/react-start";
+import { getWebRequest } from "@tanstack/react-start/server";
 import { dbIsAuthorExam, dbIsExamPrivate } from "~/db/service/exam";
-import { serverGetUser } from "./auth";
+import { auth } from "../auth";
 
 export const serverMiddlewareAuth = createMiddleware({
   type: "function",
 }).server(async ({ next }) => {
-  const user = await serverGetUser();
-  if (!user) {
+  const { headers } = getWebRequest();
+  const session = await auth.api.getSession({
+    headers,
+    query: { disableCookieCache: true },
+  });
+
+  if (!session) {
     throw new Error("Unauthorized");
   }
-  return next({ context: { user } });
+  return next({ context: { user: session.user } });
 });
 
 export interface serverMiddlewareIsAuthorExamData {

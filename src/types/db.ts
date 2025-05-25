@@ -1,5 +1,6 @@
 import { Selectable } from "kysely";
 import ExamTable from "~/db/schemas/public/Exam";
+import { ExamAttempt } from "~/db/schemas/public/ExamAttempt";
 import ExamOption from "~/db/schemas/public/ExamOption";
 import ExamQuestion from "~/db/schemas/public/ExamQuestion";
 
@@ -30,3 +31,5 @@ export type CleanExamOption = DeepUnbrand<Selectable<ExamOption>>;
 export type CleanQuestionWithOptions = CleanExamQuestion & {
   options: CleanExamOption[];
 };
+
+export type CleanExamAttempt = DeepUnbrand<Selectable<ExamAttempt>>;

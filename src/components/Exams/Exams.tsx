@@ -1,7 +1,8 @@
-import { Card, Flex, Stack, Text, Title } from "@mantine/core";
+import { Card, Flex, Modal, Stack, Text, Title } from "@mantine/core";
 import { Link, useLocation } from "@tanstack/react-router";
 import { CleanExamWithName } from "~/types/db";
 import classes from "./style.module.css";
+import { useDisclosure } from "@mantine/hooks";
 
 interface ExamsProps {
   data: CleanExamWithName[];
@@ -36,9 +37,15 @@ export function Exams({ data }: ExamsProps) {
     </Card>
   ));
 
+  const [opened, { open, close }] = useDisclosure(false);
   return (
-    <Flex gap="md" align="center" direction="row" wrap="wrap">
-      {cards}
-    </Flex>
+    <>
+      <Modal opened={opened} onClose={close} title="Authentication">
+        {/* Modal content */}
+      </Modal>
+      <Flex gap="md" align="center" direction="row" wrap="wrap">
+        {cards}
+      </Flex>
+    </>
   );
 }

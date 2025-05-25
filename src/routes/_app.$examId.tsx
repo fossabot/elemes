@@ -1,15 +1,31 @@
 import { Center, Container } from "@mantine/core";
 import { redirect } from "@tanstack/react-router";
+import { z } from "zod";
 import { Exam } from "~/components/Exam/Exam";
 import { queryGetExamByIdOptions } from "~/lib/server/exam";
+import { queryGetExamAttemptOptions } from "~/lib/server/examAttempt";
 import { queryGetExamQuestionByExamIsCorrectFalseId } from "~/lib/server/examQuestion";
 
+const searchParams = z.object({
+  reset: z.boolean().optional(),
+});
 export const Route = createFileRoute({
-  loader: async ({ context, params: { examId } }) => {
+  validateSearch: (search) => searchParams.parse(search),
+  beforeLoad: async ({ context, params: { examId }, search }) => {
     const examIdNum = Number(examId);
     if (isNaN(examIdNum)) {
       throw redirect({ to: "/" });
     }
+    const examResult = await context.queryClient.ensureQueryData(
+      queryGetExamAttemptOptions(examIdNum),
+    );
+    console.log(search);
+    if (examResult && search.reset !== true) {
+      throw redirect({ to: "/$examId/result", params: { examId } });
+    }
+  },
+  loader: async ({ context, params: { examId } }) => {
+    const examIdNum = Number(examId);
     const examData = await context.queryClient.ensureQueryData(
       queryGetExamByIdOptions(examIdNum),
     );

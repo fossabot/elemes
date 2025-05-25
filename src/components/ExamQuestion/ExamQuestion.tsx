@@ -34,6 +34,7 @@ interface ExamQuestionProps {
   questionText: string;
   removeQuestion: () => void;
   questionOptions: CleanExamOption[];
+  setSelectedAnswer: React.Dispatch<React.SetStateAction<Map<number, number>>>;
 }
 export function ExamQuestion({
   examId,
@@ -41,6 +42,7 @@ export function ExamQuestion({
   questionText,
   removeQuestion,
   questionOptions,
+  setSelectedAnswer,
 }: ExamQuestionProps) {
   const location = useLocation();
   const [isEditable, setIsEditable] = useState(false);
@@ -287,7 +289,14 @@ export function ExamQuestion({
           <Radio.Group
             name={`question-${questionId}`}
             value={selectedOption}
-            onChange={setSelectedOption}
+            onChange={(e) => {
+              setSelectedOption(e);
+              setSelectedAnswer((prev) => {
+                const newMap = new Map(prev);
+                newMap.set(questionId, Number(e));
+                return newMap;
+              });
+            }}
           >
             <Stack mt="xs">
               {radioOptions.map((option, index) => (
