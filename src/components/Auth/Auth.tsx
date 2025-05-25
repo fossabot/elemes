@@ -150,6 +150,7 @@ export function Register({ queryClient }: RegisterProps) {
             label="Email"
             placeholder="you@example.com"
             required
+            mt="md"
             radius="md"
             {...register("email")}
             error={errors.email?.message}
