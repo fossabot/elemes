@@ -1,4 +1,4 @@
-# elemes
+# ELEMES
 
 <div align="center">
   <img src="./src/icons/logo.svg" alt="elemes logo" width="120" height="120" />
