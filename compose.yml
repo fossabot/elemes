@@ -2,14 +2,19 @@
 services:
   app:
     image: elemes:latest
+    container_name: elemes
+    ports:
+      - "3000:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:17-alpine
+    container_name: elemes-db
     volumes:
       - db-elemes:/var/lib/postgresql/data
     healthcheck:

@@ -1,1 +1,0 @@
-migrate -source file:///app/migrations -database ${DATABASE_URL} up

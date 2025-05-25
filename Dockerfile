@@ -1,29 +1,27 @@
-ARG MIGRATE_VERSION=4.18.3
 FROM node:22 AS build-env
+ARG MIGRATE_VERSION=4.18.3
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --force
+RUN npm i --force
 
 COPY . .
 
 RUN npm run build
 
-FROM gcr.io/distroless/nodejs22-debian12 AS production
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v${MIGRATE_VERSION}/migrate.linux-amd64.tar.gz | tar xvz \
+    && chmod +x migrate
 
-COPY ./entrypoint.sh /entrypoint.sh
+FROM gcr.io/distroless/nodejs24-debian12 AS production
 
 WORKDIR /app
 
 COPY --from=build-env /app/.output/ ./.output/
+COPY --from=build-env /app/migrate /usr/local/bin/migrate
 COPY ./migrations ./migrations
+COPY ./entrypoint.js ./entrypoint.js
 
 EXPOSE 3000
 
-RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v${MIGRATE_VERSION}/migrate.linux-amd64.tar.gz | tar xvz \
-    && mv migrate /usr/local/bin/ \
-    && chmod +x /usr/local/bin/migrate
-
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["node", "/app/.output/server/index.mjs"]
+CMD ["/app/entrypoint.js"]

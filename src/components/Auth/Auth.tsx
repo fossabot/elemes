@@ -140,7 +140,7 @@ export function Register({ queryClient }: RegisterProps) {
         >
           <TextInput
             label="Name"
-            placeholder="you@example.com"
+            placeholder="you"
             required
             radius="md"
             {...register("name")}

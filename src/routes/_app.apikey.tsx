@@ -25,6 +25,9 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
 
   const [newApikey, setNewApikey] = useState<string>();
+  const [listAPiKeys, setListApiKeys] = useState<string[]>(
+    apiKeys.map((key) => key.id),
+  );
 
   const mutationCreateApiKey = useMutation({
     mutationFn: async () => {
@@ -36,21 +39,36 @@ function RouteComponent() {
     },
     onSuccess: async (data) => {
       setNewApikey(data.key);
+      setListApiKeys((prevKeys) => [...prevKeys, data.id]);
     },
     onError: (error) => {
       console.error("Login failed:", error);
     },
   });
 
+  type mutationDeleteApiKeyType = {
+    keyId: string;
+    index: number;
+  };
   const mutationDeleteApiKey = useMutation({
-    mutationFn: async (keyId: string) => {
-      const { data, error } = await authClient.apiKey.delete({ keyId });
+    mutationFn: async (props: mutationDeleteApiKeyType) => {
+      const { data, error } = await authClient.apiKey.delete({
+        keyId: props.keyId,
+      });
       if (error) {
         throw new Error(error.message);
       }
+      return props;
     },
-    onSuccess: async () => {
-      navigate({ to: ".", reloadDocument: true });
+    onSuccess: async (props) => {
+      setListApiKeys((prevKeys) => {
+        const newKeys = [...prevKeys];
+        newKeys.splice(props.index, 1);
+        return newKeys;
+      });
+      if (newApikey === props.keyId) {
+        setNewApikey(undefined);
+      }
     },
     onError: (error) => {
       console.error("Login failed:", error);
@@ -77,20 +95,25 @@ function RouteComponent() {
             <Space h="md" />
           </Paper>
         )}
-        {apiKeys && apiKeys.length > 0 ? (
+        {listAPiKeys && listAPiKeys.length > 0 ? (
           <>
             <Text ta={"center"}>(click on the key to delete it)</Text>
             <Space h="sm" />
             <Stack gap={"sm"}>
-              {apiKeys.map((key) => (
+              {listAPiKeys.map((keyId, index) => (
                 <Button
-                  key={key.id}
+                  key={keyId}
                   color={"red"}
                   fullWidth
-                  onClick={() => mutationDeleteApiKey.mutate(key.id)}
+                  onClick={() =>
+                    mutationDeleteApiKey.mutate({
+                      keyId,
+                      index,
+                    })
+                  }
                   loading={mutationDeleteApiKey.isPending}
                 >
-                  {key.id}
+                  {keyId}
                 </Button>
               ))}
             </Stack>
