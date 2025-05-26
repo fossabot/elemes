@@ -147,7 +147,6 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
         to: `/${examData.id}/result`,
         reloadDocument: true,
       });
-      console.log("Exam submitted successfully");
     },
     onError: (error) => {
       console.error("Error submitting exam:", error);

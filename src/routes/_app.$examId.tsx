@@ -19,7 +19,6 @@ export const Route = createFileRoute({
     const examResult = await context.queryClient.ensureQueryData(
       queryGetExamAttemptOptions(examIdNum),
     );
-    console.log(search);
     if (examResult && search.reset !== true) {
       throw redirect({ to: "/$examId/result", params: { examId } });
     }

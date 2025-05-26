@@ -134,8 +134,6 @@ export function ExamQuestion({
 
   const deleteRadioOption = (index: number) => {
     const newOptions = [...radioOptions];
-    console.log(newOptions[index]);
-    console.log("Deleting option at index:", index);
     if (newOptions[index].id !== 0) {
       const deletedId = newOptions[index].id;
       setDbIdDeletedOption([...dbIdDeletedOption, deletedId]);
@@ -146,7 +144,6 @@ export function ExamQuestion({
       });
     }
     if (newOptions[index].id === 0) {
-      console.log("Deleting new option, not in DB");
       countNewOptions.current -= 1;
     }
     newOptions.splice(index, 1);
@@ -192,7 +189,6 @@ export function ExamQuestion({
   };
   const mutationSaveUpdateOptions = useMutation({
     mutationFn: async () => {
-      console.log("Updating options:", dbIdUpdatedOptionMap);
       if (dbIdUpdatedOptionMap.size > 0) {
         const updates = Array.from(dbIdUpdatedOptionMap.values()).map(
           (option) => ({
@@ -203,7 +199,6 @@ export function ExamQuestion({
             isCorrect: option.isCorrect,
           }),
         );
-        console.log(updates);
         const result = await serverUpdateExamOptionText({
           data: {
             update: updates,
