@@ -37,7 +37,6 @@
     "@rollup/rollup-linux-x64-gnu": "^4.41.0",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
-    "@tailwindcss/vite": "^4.0.8",
     "@tanstack/react-query-devtools": "^5.76.1",
     "@types/node": "^22.5.4",
     "@types/pg": "^8.15.2",
