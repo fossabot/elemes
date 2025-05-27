@@ -20,8 +20,11 @@ The easiest way to get started is using the provided DevContainer configuration:
 2. **Open in DevContainer:**
 
    - Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
-   - Select "Dev Containers: Reopen in Container"
+   - Select "Dev Containers: Clone Repository in Container Volume"
    - Wait for the container to build and start
+
+> [!IMPORTANT]
+> When running the DevContainer for the first time, you may encounter an error because the `.env` file is not yet present. Create a `.env` file first inside the recovery container (you can use `.env.example` as a template).
 
 3. **Start development:**
    ```bash
