@@ -2,6 +2,11 @@ name: Create and publish a Docker image
 
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        required: true
+        type: string
+        description: "The tag name to release"
 
 env:
   REGISTRY: ghcr.io
@@ -33,11 +38,18 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ tag_name }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ tag_name }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
