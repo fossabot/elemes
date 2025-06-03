@@ -1,7 +1,7 @@
 ---
 services:
   app:
-    image: elemes:latest
+    image: ghcr.io/hilmoo/elemes:1.0.0
     container_name: elemes
     ports:
       - "3000:3000"
