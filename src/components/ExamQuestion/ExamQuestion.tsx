@@ -58,17 +58,15 @@ export function ExamQuestion({
   }
   const mutationSaveQuestionTextEdited = useMutation({
     mutationFn: async () => {
-      if (questionTextEdited) {
-        const result = await serverUpdateQuestionTextById({
-          data: {
-            examId,
-            questionId,
-            questionText: question,
-          },
-        });
-        if (!result) {
-          console.error("Failed to update question text");
-        }
+      const result = await serverUpdateQuestionTextById({
+        data: {
+          examId,
+          questionId,
+          questionText: question,
+        },
+      });
+      if (!result) {
+        console.error("Failed to update question text");
       }
     },
     onSuccess: () => {
@@ -378,12 +376,12 @@ export function ExamQuestion({
                 onClick={() => {
                   if (questionTextEdited) {
                     mutationSaveQuestionTextEdited.mutate();
+                    setQuestionTextEdited(false);
                   }
                   mutationSaveNewQuestionOptions.mutate();
                   mutationSaveDeleteOptions.mutate();
                   mutationSaveUpdateOptions.mutate();
                   setIsEditable(false);
-                  setQuestionTextEdited(false);
                 }}
                 loading={
                   mutationSaveQuestionTextEdited.isPending ||
