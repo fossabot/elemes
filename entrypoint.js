@@ -12,11 +12,4 @@ if (result.status !== 0) {
     process.exit(result.status);
 }
 
-try {
-    rmSync('/usr/local/bin/migrate', { force: true });
-    rmSync('/app/migrations', { recursive: true, force: true });
-} catch (err) {
-    console.error('Error removing files:', err);
-}
-
 import('/app/.output/server/index.mjs');
