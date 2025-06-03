@@ -10,3 +10,15 @@ export async function dbGetNameById(id: UserId) {
 
   return user;
 }
+
+export async function dbGetNameByIdString(id: string) {
+  const idB = id as UserId & { __brand: "public.user" };
+
+  const user = await db
+    .selectFrom("user")
+    .select(["name"])
+    .where("id", "=", idB)
+    .executeTakeFirstOrThrow();
+
+  return user;
+}

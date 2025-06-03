@@ -26,3 +26,22 @@ export async function dbUpsertPublicKey(data: PublicKeyData) {
 
   return result as CleanPublickey;
 }
+
+export async function dbVerifyPublicUser(
+  userId: string,
+  publicKey: string,
+): Promise<boolean> {
+  const userIdB = userId as UserId & { __brand: "public.user" };
+
+  const result = await db
+    .selectFrom("publickey")
+    .select("publicKey")
+    .where("userId", "=", userIdB)
+    .executeTakeFirst();
+
+  if (!result) {
+    return false;
+  }
+
+  return result.publicKey === publicKey;
+}

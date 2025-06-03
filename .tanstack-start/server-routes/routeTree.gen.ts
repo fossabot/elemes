@@ -23,6 +23,9 @@ import { ServerRoute as ApiDataIdRouteImport } from './../../src/routes/api/data
 import { ServerRoute as ApiCertExamIdRouteImport } from './../../src/routes/api/cert.$examId'
 import { ServerRoute as ApiAuthSplatRouteImport } from './../../src/routes/api/auth/$'
 import { ServerRoute as ApiDataGradeExamIdRouteImport } from './../../src/routes/api/data.grade.$examId'
+import { ServerRoute as ApiOracleDataUserIdPublicKeyRouteImport } from './../../src/routes/api/oracle/data.$userId.$publicKey'
+import { ServerRoute as ApiOracleCertUserIdExamIdRouteImport } from './../../src/routes/api/oracle/cert.$userId.$examId'
+import { ServerRoute as ApiOracleDataUserIdGradeExamIdRouteImport } from './../../src/routes/api/oracle/data.$userId.grade.$examId'
 
 // Create/Update Routes
 
@@ -51,6 +54,27 @@ const ApiDataGradeExamIdRoute = ApiDataGradeExamIdRouteImport.update({
   path: '/api/data/grade/$examId',
   getParentRoute: () => rootRoute,
 } as any)
+
+const ApiOracleDataUserIdPublicKeyRoute =
+  ApiOracleDataUserIdPublicKeyRouteImport.update({
+    id: '/api/oracle/data/$userId/$publicKey',
+    path: '/api/oracle/data/$userId/$publicKey',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const ApiOracleCertUserIdExamIdRoute =
+  ApiOracleCertUserIdExamIdRouteImport.update({
+    id: '/api/oracle/cert/$userId/$examId',
+    path: '/api/oracle/cert/$userId/$examId',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const ApiOracleDataUserIdGradeExamIdRoute =
+  ApiOracleDataUserIdGradeExamIdRouteImport.update({
+    id: '/api/oracle/data/$userId/grade/$examId',
+    path: '/api/oracle/data/$userId/grade/$examId',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -82,6 +106,27 @@ declare module '@tanstack/react-start/server' {
       path: '/api/data/grade/$examId'
       fullPath: '/api/data/grade/$examId'
       preLoaderRoute: typeof ApiDataGradeExamIdRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/api/oracle/cert/$userId/$examId': {
+      id: '/api/oracle/cert/$userId/$examId'
+      path: '/api/oracle/cert/$userId/$examId'
+      fullPath: '/api/oracle/cert/$userId/$examId'
+      preLoaderRoute: typeof ApiOracleCertUserIdExamIdRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/api/oracle/data/$userId/$publicKey': {
+      id: '/api/oracle/data/$userId/$publicKey'
+      path: '/api/oracle/data/$userId/$publicKey'
+      fullPath: '/api/oracle/data/$userId/$publicKey'
+      preLoaderRoute: typeof ApiOracleDataUserIdPublicKeyRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/api/oracle/data/$userId/grade/$examId': {
+      id: '/api/oracle/data/$userId/grade/$examId'
+      path: '/api/oracle/data/$userId/grade/$examId'
+      fullPath: '/api/oracle/data/$userId/grade/$examId'
+      preLoaderRoute: typeof ApiOracleDataUserIdGradeExamIdRouteImport
       parentRoute: typeof rootRoute
     }
   }
@@ -125,6 +170,33 @@ declare module './../../src/routes/api/data.grade.$examId' {
     unknown
   >
 }
+declare module './../../src/routes/api/oracle/cert.$userId.$examId' {
+  const createServerFileRoute: CreateServerFileRoute<
+    FileRoutesByPath['/api/oracle/cert/$userId/$examId']['parentRoute'],
+    FileRoutesByPath['/api/oracle/cert/$userId/$examId']['id'],
+    FileRoutesByPath['/api/oracle/cert/$userId/$examId']['path'],
+    FileRoutesByPath['/api/oracle/cert/$userId/$examId']['fullPath'],
+    unknown
+  >
+}
+declare module './../../src/routes/api/oracle/data.$userId.$publicKey' {
+  const createServerFileRoute: CreateServerFileRoute<
+    FileRoutesByPath['/api/oracle/data/$userId/$publicKey']['parentRoute'],
+    FileRoutesByPath['/api/oracle/data/$userId/$publicKey']['id'],
+    FileRoutesByPath['/api/oracle/data/$userId/$publicKey']['path'],
+    FileRoutesByPath['/api/oracle/data/$userId/$publicKey']['fullPath'],
+    unknown
+  >
+}
+declare module './../../src/routes/api/oracle/data.$userId.grade.$examId' {
+  const createServerFileRoute: CreateServerFileRoute<
+    FileRoutesByPath['/api/oracle/data/$userId/grade/$examId']['parentRoute'],
+    FileRoutesByPath['/api/oracle/data/$userId/grade/$examId']['id'],
+    FileRoutesByPath['/api/oracle/data/$userId/grade/$examId']['path'],
+    FileRoutesByPath['/api/oracle/data/$userId/grade/$examId']['fullPath'],
+    unknown
+  >
+}
 
 // Create and export the route tree
 
@@ -133,6 +205,9 @@ export interface FileRoutesByFullPath {
   '/api/cert/$examId': typeof ApiCertExamIdRoute
   '/api/data/id': typeof ApiDataIdRoute
   '/api/data/grade/$examId': typeof ApiDataGradeExamIdRoute
+  '/api/oracle/cert/$userId/$examId': typeof ApiOracleCertUserIdExamIdRoute
+  '/api/oracle/data/$userId/$publicKey': typeof ApiOracleDataUserIdPublicKeyRoute
+  '/api/oracle/data/$userId/grade/$examId': typeof ApiOracleDataUserIdGradeExamIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -140,6 +215,9 @@ export interface FileRoutesByTo {
   '/api/cert/$examId': typeof ApiCertExamIdRoute
   '/api/data/id': typeof ApiDataIdRoute
   '/api/data/grade/$examId': typeof ApiDataGradeExamIdRoute
+  '/api/oracle/cert/$userId/$examId': typeof ApiOracleCertUserIdExamIdRoute
+  '/api/oracle/data/$userId/$publicKey': typeof ApiOracleDataUserIdPublicKeyRoute
+  '/api/oracle/data/$userId/grade/$examId': typeof ApiOracleDataUserIdGradeExamIdRoute
 }
 
 export interface FileRoutesById {
@@ -148,6 +226,9 @@ export interface FileRoutesById {
   '/api/cert/$examId': typeof ApiCertExamIdRoute
   '/api/data/id': typeof ApiDataIdRoute
   '/api/data/grade/$examId': typeof ApiDataGradeExamIdRoute
+  '/api/oracle/cert/$userId/$examId': typeof ApiOracleCertUserIdExamIdRoute
+  '/api/oracle/data/$userId/$publicKey': typeof ApiOracleDataUserIdPublicKeyRoute
+  '/api/oracle/data/$userId/grade/$examId': typeof ApiOracleDataUserIdGradeExamIdRoute
 }
 
 export interface FileRouteTypes {
@@ -157,18 +238,27 @@ export interface FileRouteTypes {
     | '/api/cert/$examId'
     | '/api/data/id'
     | '/api/data/grade/$examId'
+    | '/api/oracle/cert/$userId/$examId'
+    | '/api/oracle/data/$userId/$publicKey'
+    | '/api/oracle/data/$userId/grade/$examId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/api/auth/$'
     | '/api/cert/$examId'
     | '/api/data/id'
     | '/api/data/grade/$examId'
+    | '/api/oracle/cert/$userId/$examId'
+    | '/api/oracle/data/$userId/$publicKey'
+    | '/api/oracle/data/$userId/grade/$examId'
   id:
     | '__root__'
     | '/api/auth/$'
     | '/api/cert/$examId'
     | '/api/data/id'
     | '/api/data/grade/$examId'
+    | '/api/oracle/cert/$userId/$examId'
+    | '/api/oracle/data/$userId/$publicKey'
+    | '/api/oracle/data/$userId/grade/$examId'
   fileRoutesById: FileRoutesById
 }
 
@@ -177,6 +267,9 @@ export interface RootRouteChildren {
   ApiCertExamIdRoute: typeof ApiCertExamIdRoute
   ApiDataIdRoute: typeof ApiDataIdRoute
   ApiDataGradeExamIdRoute: typeof ApiDataGradeExamIdRoute
+  ApiOracleCertUserIdExamIdRoute: typeof ApiOracleCertUserIdExamIdRoute
+  ApiOracleDataUserIdPublicKeyRoute: typeof ApiOracleDataUserIdPublicKeyRoute
+  ApiOracleDataUserIdGradeExamIdRoute: typeof ApiOracleDataUserIdGradeExamIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -184,6 +277,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCertExamIdRoute: ApiCertExamIdRoute,
   ApiDataIdRoute: ApiDataIdRoute,
   ApiDataGradeExamIdRoute: ApiDataGradeExamIdRoute,
+  ApiOracleCertUserIdExamIdRoute: ApiOracleCertUserIdExamIdRoute,
+  ApiOracleDataUserIdPublicKeyRoute: ApiOracleDataUserIdPublicKeyRoute,
+  ApiOracleDataUserIdGradeExamIdRoute: ApiOracleDataUserIdGradeExamIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -199,7 +295,10 @@ export const routeTree = rootRoute
         "/api/auth/$",
         "/api/cert/$examId",
         "/api/data/id",
-        "/api/data/grade/$examId"
+        "/api/data/grade/$examId",
+        "/api/oracle/cert/$userId/$examId",
+        "/api/oracle/data/$userId/$publicKey",
+        "/api/oracle/data/$userId/grade/$examId"
       ]
     },
     "/api/auth/$": {
@@ -213,6 +312,15 @@ export const routeTree = rootRoute
     },
     "/api/data/grade/$examId": {
       "filePath": "api/data.grade.$examId.ts"
+    },
+    "/api/oracle/cert/$userId/$examId": {
+      "filePath": "api/oracle/cert.$userId.$examId.ts"
+    },
+    "/api/oracle/data/$userId/$publicKey": {
+      "filePath": "api/oracle/data.$userId.$publicKey.ts"
+    },
+    "/api/oracle/data/$userId/grade/$examId": {
+      "filePath": "api/oracle/data.$userId.grade.$examId.ts"
     }
   }
 }
