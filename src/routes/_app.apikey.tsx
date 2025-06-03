@@ -5,12 +5,14 @@ import {
   Space,
   Stack,
   Text,
+  TextInput,
   Title,
 } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { authClient } from "~/lib/client/auth";
 import { serverGetApiKey } from "~/lib/server/auth";
+import { serverUpsertPublicKey } from "~/lib/server/publickey";
 
 export const Route = createFileRoute({
   loader: async () => {
@@ -75,8 +77,37 @@ function RouteComponent() {
     },
   });
 
+  const [publicKey, setPublicKey] = useState("");
+  const mutationUpsertPublicKey = useMutation({
+    mutationFn: async () => {
+      const result = await serverUpsertPublicKey({
+        data: { publicKey },
+      });
+      return result;
+    },
+    onSuccess: () => {},
+    onError: (error) => {
+      console.error("Update public key failed:", error);
+    },
+  });
+
   return (
     <Container py="xl">
+      <Paper withBorder shadow="sm" p={22} mt={30} radius="md">
+        <Title order={3}>Public Key</Title>
+        <Space h="md" />
+        <TextInput onChange={(e) => setPublicKey(e.currentTarget.value)} />
+        <Button
+          fullWidth
+          mt={"md"}
+          onClick={() => {
+            mutationUpsertPublicKey.mutate();
+          }}
+          loading={mutationUpsertPublicKey.isPending}
+        >
+          Update
+        </Button>
+      </Paper>
       <Paper withBorder shadow="sm" p={22} mt={30} radius="md">
         <Title order={3}>Generate Api Key</Title>
         <Space h="md" />

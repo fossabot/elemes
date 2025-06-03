@@ -3,6 +3,7 @@ import ExamTable from "~/db/schemas/public/Exam";
 import { ExamAttempt } from "~/db/schemas/public/ExamAttempt";
 import ExamOption from "~/db/schemas/public/ExamOption";
 import ExamQuestion from "~/db/schemas/public/ExamQuestion";
+import { Publickey } from "~/db/schemas/public/Publickey";
 
 type DeepUnbrand<T> = T extends number & { __brand: any }
   ? number
@@ -33,3 +34,5 @@ export type CleanQuestionWithOptions = CleanExamQuestion & {
 };
 
 export type CleanExamAttempt = DeepUnbrand<Selectable<ExamAttempt>>;
+
+export type CleanPublickey = DeepUnbrand<Selectable<Publickey>>;

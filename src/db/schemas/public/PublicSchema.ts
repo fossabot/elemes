@@ -11,6 +11,7 @@ import type { default as ApikeyTable } from './Apikey';
 import type { default as UserTable } from './User';
 import type { default as SessionTable } from './Session';
 import type { default as ExamQuestionTable } from './ExamQuestion';
+import type { default as PublickeyTable } from './Publickey';
 
 export default interface PublicSchema {
   verification: VerificationTable;
@@ -32,4 +33,6 @@ export default interface PublicSchema {
   session: SessionTable;
 
   examQuestion: ExamQuestionTable;
+
+  publickey: PublickeyTable;
 }

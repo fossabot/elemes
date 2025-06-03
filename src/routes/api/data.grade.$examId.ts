@@ -25,7 +25,7 @@ export const ServerRoute = createServerFileRoute().methods({
       });
     }
 
-    const examResult = await dbGetExamAttemptById(examId, session.user.id);
+    const examResult = await dbGetExamAttemptById(examIdNum, session.user.id);
 
     return json(examResult);
   },

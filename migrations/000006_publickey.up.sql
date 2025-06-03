@@ -1,0 +1,6 @@
+CREATE TABLE publickey
+(
+    id         INT  NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id    TEXT NOT NULL UNIQUE REFERENCES "user" (id) ON DELETE CASCADE,
+    public_key TEXT
+);
