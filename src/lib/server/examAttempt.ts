@@ -15,9 +15,7 @@ const serverGetExamAttempt = createServerFn({ method: "GET" })
   .middleware([serverMiddlewareAuth])
   .validator((data: serverGetExamAttemptData) => data)
   .handler(async ({ context, data }) => {
-    const examResult = await dbGetExamAttemptById(data.examId, context.user.id);
-
-    return examResult;
+    return dbGetExamAttemptById(data.examId, context.user.id);
   });
 
 export const queryGetExamAttemptOptions = (examId: number) =>

@@ -1,5 +1,4 @@
 import { spawnSync } from 'child_process';
-import { rmSync } from 'fs';
 
 const result = spawnSync('/usr/local/bin/migrate', [
     '-source', 'file:///app/migrations',

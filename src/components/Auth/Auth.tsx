@@ -12,7 +12,7 @@ import {
 import { useForm } from "react-hook-form";
 
 import { QueryClient, useMutation } from "@tanstack/react-query";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { authClient } from "~/lib/client/auth";
 import { LoginSchema, SignUpSchema } from "./schema";
 import classes from "./style.module.css";
@@ -24,10 +24,9 @@ export function Login({ queryClient }: LoginProps) {
   const loginForm = useForm({
     resolver: zodResolver(LoginSchema),
   });
-  const { register, handleSubmit, formState, control } = loginForm;
+  const { register, handleSubmit, formState } = loginForm;
   const { errors } = formState;
   const navigate = useNavigate();
-  const router = useRouter();
 
   const mutationLogin = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
@@ -96,7 +95,7 @@ export function Register({ queryClient }: RegisterProps) {
   const registerForm = useForm({
     resolver: zodResolver(SignUpSchema),
   });
-  const { register, handleSubmit, formState, control } = registerForm;
+  const { register, handleSubmit, formState } = registerForm;
   const { errors } = formState;
   const navigate = useNavigate();
 
@@ -128,7 +127,7 @@ export function Register({ queryClient }: RegisterProps) {
         Create an account
       </Title>
 
-      <Text className={classes.subtitle} ta="center" mt="sm" color="dimmed">
+      <Text className={classes.subtitle} ta="center" mt="sm" c="dimmed">
         Already have an account? <Anchor href="/login">Sign in</Anchor>
       </Text>
 

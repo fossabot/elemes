@@ -11,10 +11,8 @@ export const serverUpsertPublicKey = createServerFn({
   .middleware([serverMiddlewareAuth])
   .validator((data: serverUpsertPublicKeyData) => data)
   .handler(async ({ context, data }) => {
-    const publicKey = await dbUpsertPublicKey({
+    return dbUpsertPublicKey({
       userId: context.user.id,
       publicKey: data.publicKey,
     });
-
-    return publicKey;
   });

@@ -61,8 +61,8 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
         },
       ]);
     },
-    onSuccess: () => {
-      queryclient.invalidateQueries({
+    onSuccess: async () => {
+      await queryclient.invalidateQueries({
         queryKey: ["exam-questions", examData.id],
         exact: true,
       });
@@ -79,13 +79,12 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
 
   const mutationUpdateExamTitle = useMutation({
     mutationFn: async (title: string) => {
-      const result = await serverUpdateExamTitleById({
+      return serverUpdateExamTitleById({
         data: {
           title,
           examId: examData.id,
         },
       });
-      return result;
     },
     onSuccess: () => {
       setIsEditable(false);
@@ -97,12 +96,11 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
 
   const mutationDeleteExam = useMutation({
     mutationFn: async () => {
-      const result = await serverDeleteExamById({
+      serverDeleteExamById({
         data: {
           examId: examData.id,
         },
       });
-      return result;
     },
     onSuccess: async () => {
       await queryclient.invalidateQueries({ queryKey: ["exams"], exact: true });
@@ -114,7 +112,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
         queryKey: ["exam", examData.id],
         exact: true,
       });
-      navigate({ to: "/edit", reloadDocument: true });
+      await navigate({ to: "/edit", reloadDocument: true });
     },
     onError: (error) => {
       console.error("Error deleting exam:", error);
@@ -126,7 +124,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
   );
   const mutationSubmitExam = useMutation({
     mutationFn: async () => {
-      const result = await serverGradingExam({
+      await serverGradingExam({
         data: {
           examId: examData.id,
           options: Array.from(selectedAnswer.entries()).map(
@@ -143,7 +141,7 @@ export function Exam({ examData, queryclient, examQuestionData }: ExamProps) {
         queryKey: ["exam-attempt", examData.id],
         exact: true,
       });
-      navigate({
+      await navigate({
         to: `/${examData.id}/result`,
         reloadDocument: true,
       });

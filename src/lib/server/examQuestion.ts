@@ -65,7 +65,7 @@ export const serverDeleteQuestionById = createServerFn({
   .middleware([serverMiddlewareIsAuthorExam])
   .validator((data: serverDeleteQuestionByIdData) => data)
   .handler(async ({ data }) => {
-    const { examId, questionId } = data;
+    const { questionId } = data;
     const result = await dbDeleteQuestionById(questionId);
 
     if (!result) {

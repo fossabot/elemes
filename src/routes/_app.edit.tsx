@@ -22,12 +22,8 @@ import {
 } from "~/lib/server/exam";
 
 export const Route = createFileRoute({
-  loader: async ({ context }) => {
-    const data = await context.queryClient.ensureQueryData(
-      queryGetUserExamsOptions(),
-    );
-    return data;
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(queryGetUserExamsOptions()),
   component: RouteComponent,
   notFoundComponent: () => RouteComponent({ notFound: true }),
 });
@@ -35,28 +31,25 @@ export const Route = createFileRoute({
 interface RouteComponentProps {
   notFound?: boolean;
 }
+
 function RouteComponent({ notFound }: RouteComponentProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
   const data = Route.useLoaderData();
-  const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
   const newExamForm = useForm({
     resolver: zodResolver(newExamsSchema),
   });
-  const { register, handleSubmit, formState, control } = newExamForm;
+  const { register, handleSubmit, formState } = newExamForm;
   const { errors } = formState;
 
   const mutationNewExam = useMutation({
-    mutationFn: async (name: string) => {
-      const result = await serverCreateNewExam({ data: { name } });
-      return result;
-    },
-    onSuccess: (data, variables, context) => {
-      router.invalidate();
+    mutationFn: (name: string) => serverCreateNewExam({ data: { name } }),
+    onSuccess: async (data) => {
+      await router.invalidate();
       newExamForm.reset();
-      navigate({
+      await navigate({
         from: "/",
         to: `/edit/${data.id}`,
       });

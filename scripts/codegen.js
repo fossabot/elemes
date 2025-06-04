@@ -17,4 +17,4 @@ async function run() {
   await processDatabase(config);
 }
 
-run();
+await run();

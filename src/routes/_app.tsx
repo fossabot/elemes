@@ -16,11 +16,11 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Logo from "~/components/logo";
 import { SchemaColor } from "~/components/SchemaColor/SchemaColor";
 import { authClient } from "~/lib/client/auth";
-import { queryGetUserOptions, serverCheckSession } from "~/lib/server/auth";
+import { queryGetUserOptions } from "~/lib/server/auth";
 import RadixIconsAvatar from "~icons/radix-icons/avatar";
 
 export const Route = createFileRoute({
@@ -81,7 +81,7 @@ function RouteComponent() {
 
 interface AvatarMenuProps {
   queryClient: QueryClient;
-  setOpened: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpened: Dispatch<SetStateAction<boolean>>;
 }
 function AvatarMenu({ queryClient, setOpened }: AvatarMenuProps) {
   const { data: userData } = useQuery(queryGetUserOptions());

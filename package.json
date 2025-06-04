@@ -9,7 +9,8 @@
     "dev:codegen": "node ./scripts/codegen.js",
     "dev:db:migrate": "migrate -source file://migrations -database ${DATABASE_URL} up",
     "build": "vite build",
-    "start": "vite start"
+    "start": "vite start",
+    "format": "prettier ./src --write"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

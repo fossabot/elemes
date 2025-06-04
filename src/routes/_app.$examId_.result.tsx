@@ -13,7 +13,7 @@ import { queryGetExamByIdOptions } from "~/lib/server/exam";
 import { queryGetExamAttemptOptions } from "~/lib/server/examAttempt";
 
 export const Route = createFileRoute({
-  beforeLoad: async ({ context, params: { examId }, search }) => {
+  beforeLoad: async ({ params: { examId } }) => {
     const examIdNum = Number(examId);
     if (isNaN(examIdNum)) {
       throw redirect({ to: "/" });

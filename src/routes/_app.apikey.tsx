@@ -24,7 +24,6 @@ export const Route = createFileRoute({
 
 function RouteComponent() {
   const { apiKeys } = Route.useLoaderData();
-  const navigate = Route.useNavigate();
 
   const [newApikey, setNewApikey] = useState<string>();
   const [listAPiKeys, setListApiKeys] = useState<string[]>(
@@ -54,7 +53,7 @@ function RouteComponent() {
   };
   const mutationDeleteApiKey = useMutation({
     mutationFn: async (props: mutationDeleteApiKeyType) => {
-      const { data, error } = await authClient.apiKey.delete({
+      const { error } = await authClient.apiKey.delete({
         keyId: props.keyId,
       });
       if (error) {
@@ -79,12 +78,10 @@ function RouteComponent() {
 
   const [publicKey, setPublicKey] = useState("");
   const mutationUpsertPublicKey = useMutation({
-    mutationFn: async () => {
-      const result = await serverUpsertPublicKey({
+    mutationFn: () =>
+      serverUpsertPublicKey({
         data: { publicKey },
-      });
-      return result;
-    },
+      }),
     onSuccess: () => {},
     onError: (error) => {
       console.error("Update public key failed:", error);

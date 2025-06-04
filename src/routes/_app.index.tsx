@@ -3,11 +3,8 @@ import { Exams } from "~/components/Exams/Exams";
 import { queryGetExamsOptions } from "~/lib/server/exam";
 
 export const Route = createFileRoute({
-  loader: async ({ context }) => {
-    const data = await context.queryClient.ensureQueryData(
-      queryGetExamsOptions(),
-    );
-    return data;
+  loader: ({ context }) => {
+    return context.queryClient.ensureQueryData(queryGetExamsOptions());
   },
   component: App,
   notFoundComponent: () => NotFound(),

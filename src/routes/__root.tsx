@@ -12,10 +12,10 @@ import * as React from "react";
 
 import defaultMantine from "@mantine/core/styles.css?url";
 import { queryGetUserOptions, serverGetUser } from "~/lib/server/auth";
-import { shadcnCssVariableResolver } from "../mantine/cssVariableResolver";
-import fontCustom from "../mantine/font.css?url";
-import customMantine from "../mantine/style.css?url";
-import { shadcnTheme } from "../mantine/theme";
+import { shadcnCssVariableResolver } from "~/mantine/cssVariableResolver";
+import fontCustom from "~/mantine/font.css?url";
+import customMantine from "~/mantine/style.css?url";
+import { shadcnTheme } from "~/mantine/theme";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;

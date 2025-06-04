@@ -16,8 +16,7 @@ export const serverCheckSession = createServerFn({ method: "GET" }).handler(
   async () => {
     const { headers } = getWebRequest();
     const session = await auth.api.getSession({ headers });
-    const hasSession = !!session?.session;
-    return hasSession;
+    return !!session?.session;
   },
 );
 

@@ -1,6 +1,8 @@
-type LogoProps = React.SVGProps<SVGSVGElement>;
+import { FC, SVGProps } from "react";
 
-const Logo: React.FC<LogoProps> = (props) => (
+type LogoProps = SVGProps<SVGSVGElement>;
+
+const Logo: FC<LogoProps> = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     id="logo_svg__Layer_2"

@@ -1,6 +1,6 @@
 # ELEMES
 
-<div align="center">
+<div style="text-align: center;">
   <img src="./src/icons/logo.svg" alt="elemes logo" width="120" height="120" />
   
   **LMS but only the exam part :D**

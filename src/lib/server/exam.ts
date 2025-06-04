@@ -55,18 +55,19 @@ export const queryGetUserExamsOptions = () =>
 interface serverCreateNewExamData {
   name: string;
 }
+
 export const serverCreateNewExam = createServerFn({ method: "POST" })
   .middleware([serverMiddlewareAuth])
   .validator((data: serverCreateNewExamData) => data)
   .handler(async ({ context, data }) => {
     const { user } = context;
     const { name } = data;
-    const result = await dbCreateNewExam(name, user.id);
 
-    return result;
+    return dbCreateNewExam(name, user.id);
   });
 
 interface serverGetExamByIdData extends serverMiddlewareIsExamPublicData {}
+
 const serverGetExamById = createServerFn({ method: "GET" })
   .middleware([serverMiddlewareAuth])
   .validator((data: serverGetExamByIdData) => data)
@@ -97,6 +98,7 @@ interface serverUpdateExamTitleByIdData
   extends serverMiddlewareIsAuthorExamData {
   title: string;
 }
+
 export const serverUpdateExamTitleById = createServerFn({ method: "POST" })
   .middleware([serverMiddlewareIsAuthorExam])
   .validator((data: serverUpdateExamTitleByIdData) => data)
@@ -112,6 +114,7 @@ export const serverUpdateExamTitleById = createServerFn({ method: "POST" })
   });
 
 interface serverDeleteExamByIdData extends serverMiddlewareIsAuthorExamData {}
+
 export const serverDeleteExamById = createServerFn({ method: "POST" })
   .middleware([serverMiddlewareIsAuthorExam])
   .validator((data: serverDeleteExamByIdData) => data)
@@ -130,6 +133,7 @@ interface serverChangeExamVisibilityData
   extends serverMiddlewareIsAuthorExamData {
   isPrivate: boolean;
 }
+
 export const serverChangeExamVisibility = createServerFn({ method: "POST" })
   .middleware([serverMiddlewareIsAuthorExam])
   .validator((data: serverChangeExamVisibilityData) => data)

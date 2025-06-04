@@ -13,7 +13,7 @@ import {
 import { useElementSize } from "@mantine/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useRef, useState } from "react";
 import {
   serverCreateExamOption,
   serverDeleteExamOption,
@@ -34,7 +34,7 @@ interface ExamQuestionProps {
   questionText: string;
   removeQuestion: () => void;
   questionOptions: CleanExamOption[];
-  setSelectedAnswer: React.Dispatch<React.SetStateAction<Map<number, number>>>;
+  setSelectedAnswer: Dispatch<SetStateAction<Map<number, number>>>;
 }
 export function ExamQuestion({
   examId,
@@ -52,7 +52,7 @@ export function ExamQuestion({
 
   const [question, setQuestion] = useState(questionText);
   const [questionTextEdited, setQuestionTextEdited] = useState(false);
-  function handleQuestionTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleQuestionTextChange(e: ChangeEvent<HTMLInputElement>) {
     setQuestion(e.currentTarget.value);
     setQuestionTextEdited(true);
   }
@@ -69,9 +69,9 @@ export function ExamQuestion({
         console.error("Failed to update question text");
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setIsEditable(false);
-      queryclient.refetchQueries({
+      await queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -106,7 +106,7 @@ export function ExamQuestion({
             optionText: option.optionText,
             isCorrect: option.isCorrect,
           }));
-        const result = await serverCreateExamOption({
+        await serverCreateExamOption({
           data: {
             create: newOptions,
             examId,
@@ -114,8 +114,8 @@ export function ExamQuestion({
         });
       }
     },
-    onSuccess: () => {
-      queryclient.refetchQueries({
+    onSuccess: async () => {
+      await queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -150,7 +150,7 @@ export function ExamQuestion({
   const mutationSaveDeleteOptions = useMutation({
     mutationFn: async () => {
       if (dbIdDeletedOption.length > 0) {
-        const result = await serverDeleteExamOption({
+        await serverDeleteExamOption({
           data: {
             optionId: dbIdDeletedOption,
             examId,
@@ -158,8 +158,8 @@ export function ExamQuestion({
         });
       }
     },
-    onSuccess: () => {
-      queryclient.refetchQueries({
+    onSuccess: async () => {
+      await queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -197,7 +197,7 @@ export function ExamQuestion({
             isCorrect: option.isCorrect,
           }),
         );
-        const result = await serverUpdateExamOptionText({
+        await serverUpdateExamOptionText({
           data: {
             update: updates,
             examId,
@@ -205,8 +205,8 @@ export function ExamQuestion({
         });
       }
     },
-    onSuccess: () => {
-      queryclient.refetchQueries({
+    onSuccess: async () => {
+      await queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });
@@ -250,8 +250,8 @@ export function ExamQuestion({
       removeQuestion();
       return result;
     },
-    onSuccess: () => {
-      queryclient.refetchQueries({
+    onSuccess: async () => {
+      await queryclient.refetchQueries({
         queryKey: ["exam-questions", examId],
         exact: true,
       });

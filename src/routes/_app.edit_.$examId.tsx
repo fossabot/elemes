@@ -10,7 +10,7 @@ import {
 import { queryGetExamQuestionByExamId } from "~/lib/server/examQuestion";
 
 export const Route = createFileRoute({
-  beforeLoad: async ({ context, params: { examId }, search }) => {
+  beforeLoad: async ({ params: { examId } }) => {
     const examIdNum = Number(examId);
     if (isNaN(examIdNum)) {
       throw redirect({ to: "/" });
