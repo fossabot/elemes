@@ -19,4 +19,5 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [apiKey()],
+  trustedOrigins: ["http://localhost:3000", "https://elemes.hilmo.dev"],
 });
