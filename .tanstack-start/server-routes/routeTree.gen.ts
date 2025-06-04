@@ -19,6 +19,7 @@ import {
   createServerFileRoute,
 } from '@tanstack/react-start/server'
 
+import { ServerRoute as ApiExamsRouteImport } from './../../src/routes/api/exams'
 import { ServerRoute as ApiDataIdRouteImport } from './../../src/routes/api/data.id'
 import { ServerRoute as ApiCertExamIdRouteImport } from './../../src/routes/api/cert.$examId'
 import { ServerRoute as ApiAuthSplatRouteImport } from './../../src/routes/api/auth/$'
@@ -30,6 +31,12 @@ import { ServerRoute as ApiOracleDataUserIdGradeExamIdRouteImport } from './../.
 // Create/Update Routes
 
 const rootRoute = createServerRoute()
+
+const ApiExamsRoute = ApiExamsRouteImport.update({
+  id: '/api/exams',
+  path: '/api/exams',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const ApiDataIdRoute = ApiDataIdRouteImport.update({
   id: '/api/data/id',
@@ -80,6 +87,13 @@ const ApiOracleDataUserIdGradeExamIdRoute =
 
 declare module '@tanstack/react-start/server' {
   interface FileRoutesByPath {
+    '/api/exams': {
+      id: '/api/exams'
+      path: '/api/exams'
+      fullPath: '/api/exams'
+      preLoaderRoute: typeof ApiExamsRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -134,6 +148,15 @@ declare module '@tanstack/react-start/server' {
 
 // Add type-safety to the createFileRoute function across the route tree
 
+declare module './../../src/routes/api/exams' {
+  const createServerFileRoute: CreateServerFileRoute<
+    FileRoutesByPath['/api/exams']['parentRoute'],
+    FileRoutesByPath['/api/exams']['id'],
+    FileRoutesByPath['/api/exams']['path'],
+    FileRoutesByPath['/api/exams']['fullPath'],
+    unknown
+  >
+}
 declare module './../../src/routes/api/auth/$' {
   const createServerFileRoute: CreateServerFileRoute<
     FileRoutesByPath['/api/auth/$']['parentRoute'],
@@ -201,6 +224,7 @@ declare module './../../src/routes/api/oracle/data.$userId.grade.$examId' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
+  '/api/exams': typeof ApiExamsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cert/$examId': typeof ApiCertExamIdRoute
   '/api/data/id': typeof ApiDataIdRoute
@@ -211,6 +235,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/api/exams': typeof ApiExamsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cert/$examId': typeof ApiCertExamIdRoute
   '/api/data/id': typeof ApiDataIdRoute
@@ -222,6 +247,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/api/exams': typeof ApiExamsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cert/$examId': typeof ApiCertExamIdRoute
   '/api/data/id': typeof ApiDataIdRoute
@@ -234,6 +260,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/api/exams'
     | '/api/auth/$'
     | '/api/cert/$examId'
     | '/api/data/id'
@@ -243,6 +270,7 @@ export interface FileRouteTypes {
     | '/api/oracle/data/$userId/grade/$examId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/api/exams'
     | '/api/auth/$'
     | '/api/cert/$examId'
     | '/api/data/id'
@@ -252,6 +280,7 @@ export interface FileRouteTypes {
     | '/api/oracle/data/$userId/grade/$examId'
   id:
     | '__root__'
+    | '/api/exams'
     | '/api/auth/$'
     | '/api/cert/$examId'
     | '/api/data/id'
@@ -263,6 +292,7 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
+  ApiExamsRoute: typeof ApiExamsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCertExamIdRoute: typeof ApiCertExamIdRoute
   ApiDataIdRoute: typeof ApiDataIdRoute
@@ -273,6 +303,7 @@ export interface RootRouteChildren {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  ApiExamsRoute: ApiExamsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCertExamIdRoute: ApiCertExamIdRoute,
   ApiDataIdRoute: ApiDataIdRoute,
@@ -292,6 +323,7 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/api/exams",
         "/api/auth/$",
         "/api/cert/$examId",
         "/api/data/id",
@@ -300,6 +332,9 @@ export const routeTree = rootRoute
         "/api/oracle/data/$userId/$publicKey",
         "/api/oracle/data/$userId/grade/$examId"
       ]
+    },
+    "/api/exams": {
+      "filePath": "api/exams.ts"
     },
     "/api/auth/$": {
       "filePath": "api/auth/$.ts"
