@@ -1,11 +1,11 @@
 # ELEMES
 
-<div style="text-align: center;">
-  <img src="./src/icons/logo.svg" alt="elemes logo" width="120" height="120" />
-  
-  **LMS but only the exam part :D**
-  
-  A modern examination platform built with TanStack Start and Mantine UI
+<div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+   <img src="./src/icons/logo.svg" alt="elemes logo" width="120" height="120" />
+   
+   <strong>LMS but only the exam part :D</strong>
+   
+   <span>A modern examination platform built with TanStack Start and Mantine UI</span>
 </div>
 
 ## 🚀 Quick Start
