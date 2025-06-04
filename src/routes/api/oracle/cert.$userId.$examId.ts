@@ -1,3 +1,4 @@
+import { randomUUID } from "uncrypto";
 import { dbGetExamById } from "~/db/service/exam";
 import { dbGetExamAttemptById } from "~/db/service/examAttempt";
 import { dbGetNameByIdString } from "~/db/service/user";
@@ -10,7 +11,9 @@ export const ServerRoute = createServerFileRoute().methods({
       const { examId, userId } = params;
       const oracleHeader = headers.get("X-Is-oracle");
 
-      if (oracleHeader !== "1") {
+      const expectedOracleHeader = process.env.ORACLE_HEADER || randomUUID();
+
+      if (oracleHeader !== expectedOracleHeader) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
           status: 401,
           headers: { "Content-Type": "application/json" },

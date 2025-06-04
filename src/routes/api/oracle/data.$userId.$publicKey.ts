@@ -1,4 +1,5 @@
 import { json } from "@tanstack/react-start";
+import { randomUUID } from "uncrypto";
 import { dbVerifyPublicUser } from "~/db/service/publickey";
 
 export const ServerRoute = createServerFileRoute().methods({
@@ -7,7 +8,9 @@ export const ServerRoute = createServerFileRoute().methods({
     const headers = request.headers;
     const oracleHeader = headers.get("X-Is-oracle");
 
-    if (oracleHeader !== "1") {
+    const expectedOracleHeader = process.env.ORACLE_HEADER || randomUUID();
+
+    if (oracleHeader !== expectedOracleHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
