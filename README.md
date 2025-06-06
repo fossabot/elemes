@@ -8,6 +8,9 @@
   <span>A modern examination platform built with TanStack Start and Mantine UI</span>
 </div>
 
+> [!IMPORTANT]  
+> This app was built solely for my course project and is not intended for production use. I developed it in about two weeks, so it may contain some bugs and has not been fully tested.
+
 ## 🚀 Quick Start
 
 The easiest way to get started is using the provided DevContainer configuration:
