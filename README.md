@@ -1,4 +1,6 @@
 # ELEMES
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhilmoo%2Felemes.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhilmoo%2Felemes?ref=badge_shield)
+
 
 <div align="center">
   <img src="./src/icons/logo.svg" alt="elemes logo" width="120" height="120" />
@@ -80,6 +82,9 @@ see [migrate guide](https://github.com/golang-migrate/migrate/tree/master/cmd/mi
 ## 📝 License
 
 This project is open-sourced software licensed under the [MIT License](./LICENSE).
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhilmoo%2Felemes.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhilmoo%2Felemes?ref=badge_large)
 
 ## 🙏 Acknowledgments
 
